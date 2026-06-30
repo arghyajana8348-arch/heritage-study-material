@@ -197,6 +197,7 @@ export default function ModuleDetail({
 }
 
 interface ContentCardProps {
+  key?: string | number;
   type: string;
   title: string;
   description: string;

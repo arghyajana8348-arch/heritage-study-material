@@ -10,6 +10,7 @@ import Quiz from "./components/Quiz";
 import ExamSprint from "./components/ExamSprint";
 import SprintContent from "./components/SprintContent";
 import AdminDashboard from "./components/AdminDashboard";
+import AboutUs from "./components/AboutUs";
 import { AnimatePresence, motion } from "motion/react";
 import { supabase } from "./lib/supabase";
 
@@ -182,6 +183,8 @@ export default function App() {
         );
       case "adminDashboard":
         return <AdminDashboard />;
+      case "about":
+        return <AboutUs />;
       default:
         return <div>View not found</div>;
     }

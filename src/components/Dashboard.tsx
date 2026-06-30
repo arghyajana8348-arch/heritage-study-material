@@ -162,44 +162,6 @@ export default function Dashboard({
         </h1>
       </motion.div>
 
-      {/* Last Minute Exam Kit */}
-      <motion.section
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        <div className="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-3xl p-6 md:p-8 relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 border border-indigo-500/20">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
-
-          <div className="relative z-10 flex-1">
-            <div className="inline-block px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-bold rounded-lg mb-3 tracking-wider uppercase border border-emerald-500/30">
-              Special Offer
-            </div>
-            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
-              Last Minute Exam Kit
-            </h3>
-            <p className="text-indigo-200 mb-4 max-w-lg font-medium">
-              Get instant access to predicted questions, short notes and
-              handwritten notes for all subjects.
-            </p>
-            <div className="flex items-center gap-3">
-              <span className="text-3xl font-bold text-emerald-400">₹199</span>
-              <span className="text-indigo-400 line-through font-medium">
-                ₹999
-              </span>
-            </div>
-          </div>
-
-          <button
-            onClick={handleCheckout}
-            className="relative z-10 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold py-4 px-8 rounded-xl transition-all active:scale-95 w-full md:w-auto flex-shrink-0 shadow-lg shadow-emerald-500/20"
-          >
-            {hasPaid ? "Access Now" : "Buy Now"}
-          </button>
-        </div>
-      </motion.section>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Continue Learning */}
         <motion.section
@@ -220,7 +182,7 @@ export default function Dashboard({
                 view: "moduleDetail",
                 moduleId: nextToLearn.moduleId,
                 moduleName: nextToLearn.moduleName,
-                subjectId: nextToLearn.subjectId,
+                subjectName: nextToLearn.subjectName,
               })
             }
             className="w-full flex-1 min-h-[220px] bg-indigo-600 dark:bg-indigo-600 rounded-3xl p-8 text-left relative overflow-hidden group hover:bg-indigo-700 dark:hover:bg-indigo-500 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl shadow-xl shadow-indigo-900/10 dark:shadow-none flex flex-col justify-between active:scale-[0.98]"
