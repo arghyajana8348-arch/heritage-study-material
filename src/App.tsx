@@ -11,6 +11,7 @@ import ExamSprint from "./components/ExamSprint";
 import SprintContent from "./components/SprintContent";
 import AdminDashboard from "./components/AdminDashboard";
 import AboutUs from "./components/AboutUs";
+import Account from "./components/Account";
 import { AnimatePresence, motion } from "motion/react";
 import { supabase } from "./lib/supabase";
 
@@ -185,6 +186,8 @@ export default function App() {
         return <AdminDashboard />;
       case "about":
         return <AboutUs />;
+      case "account":
+        return <Account onLogout={handleLogout} />;
       default:
         return <div>View not found</div>;
     }

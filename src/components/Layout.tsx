@@ -16,6 +16,7 @@ import {
   LogOut,
   Settings,
   Info,
+  User,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { subjects } from "../data";
@@ -188,10 +189,12 @@ export default function Layout({
   let headerTitle = "";
   let showBack =
     currentView.view !== "dashboard" &&
-    currentView.view !== "adminDashboard";
+    currentView.view !== "adminDashboard" &&
+    currentView.view !== "account";
 
   if (currentView.view === "dashboard") headerTitle = "Overview";
   if (currentView.view === "adminDashboard") headerTitle = "Admin Dashboard";
+  if (currentView.view === "account") headerTitle = "Account Settings";
   if (currentView.view === "subjects") headerTitle = "All Subjects";
   if (currentView.view === "modules") headerTitle = currentView.subjectName;
   if (currentView.view === "moduleDetail")
@@ -247,6 +250,13 @@ export default function Layout({
             >
               <Info className="w-5 h-5" />
               About Us
+            </button>
+            <button
+              onClick={() => onNavigate({ view: "account" })}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${currentView.view === "account" ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"}`}
+            >
+              <User className="w-5 h-5" />
+              Account
             </button>
           </nav>
 
@@ -408,6 +418,17 @@ export default function Layout({
                 <Info className="w-6 h-6" />
               </div>
               <span className="text-[10px] font-medium">About</span>
+            </button>
+            <button
+              onClick={() => onNavigate({ view: "account" })}
+              className={`flex flex-col items-center gap-1 ${currentView.view === "account" ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-500"}`}
+            >
+              <div
+                className={`p-1.5 rounded-xl ${currentView.view === "account" ? "bg-indigo-50 dark:bg-indigo-500/10" : "bg-transparent"}`}
+              >
+                <User className="w-6 h-6" />
+              </div>
+              <span className="text-[10px] font-medium">Account</span>
             </button>
             {isAdmin && (
               <button
