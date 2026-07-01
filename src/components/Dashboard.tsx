@@ -78,8 +78,7 @@ export default function Dashboard({
   let totalCompletedTasks = 0;
   let totalModules = 0;
   let completedModulesCount = 0;
-  let firstIncompleteModule: { subjectName: string, subjectId: string, moduleId: string, moduleName: string } | null = null;
-  let lastCompletedModule: { subjectName: string, subjectId: string, moduleId: string, moduleName: string } | null = null;
+  let allModulesList: any[] = [];
 
   subjects.forEach((sub) => {
     sub.modules.forEach((m) => {
@@ -118,34 +117,39 @@ export default function Dashboard({
         completedModulesCount++;
       }
 
-      if (moduleCompletedTasks > 0) {
-        lastCompletedModule = {
-          subjectName: sub.name,
-          subjectId: sub.id,
-          moduleId: m.id,
-          moduleName: m.name,
-        };
-      }
-      if (moduleCompletedTasks < moduleTasks && !firstIncompleteModule) {
-        firstIncompleteModule = {
-          subjectName: sub.name,
-          subjectId: sub.id,
-          moduleId: m.id,
-          moduleName: m.name,
-        };
-      }
+      allModulesList.push({
+        subjectName: sub.name,
+        subjectId: sub.id,
+        moduleId: m.id,
+        moduleName: m.name,
+        completed: moduleCompletedTasks,
+        total: moduleTasks
+      });
     });
   });
 
   const overallProgressPercentage =
     totalTasks > 0 ? Math.round((totalCompletedTasks / totalTasks) * 100) : 0;
 
-  const nextToLearn = firstIncompleteModule || lastCompletedModule || {
-    subjectName: subjects[0]?.name || "",
-    subjectId: subjects[0]?.id || "",
-    moduleId: subjects[0]?.modules[0]?.id || "",
-    moduleName: subjects[0]?.modules[0]?.name || "",
-  };
+  let nextToLearn = null;
+  if (totalCompletedTasks > 0) {
+    let inProgressModules = allModulesList.filter(m => m.completed > 0 && m.completed < m.total);
+    if (inProgressModules.length > 0) {
+      nextToLearn = inProgressModules[inProgressModules.length - 1];
+    } else {
+      let lastCompletedIdx = -1;
+      for (let i = 0; i < allModulesList.length; i++) {
+        if (allModulesList[i].completed === allModulesList[i].total && allModulesList[i].total > 0) {
+          lastCompletedIdx = i;
+        }
+      }
+      if (lastCompletedIdx !== -1 && lastCompletedIdx + 1 < allModulesList.length) {
+        nextToLearn = allModulesList[lastCompletedIdx + 1];
+      } else if (lastCompletedIdx !== -1) {
+        nextToLearn = allModulesList[lastCompletedIdx];
+      }
+    }
+  }
 
   return (
     <div className="p-4 md:p-0 space-y-8 md:space-y-12 pb-24 md:pb-8">
@@ -176,38 +180,46 @@ export default function Dashboard({
             </h3>
           </div>
 
-          <button
-            onClick={() =>
-              onNavigate({
-                view: "moduleDetail",
-                moduleId: nextToLearn.moduleId,
-                moduleName: nextToLearn.moduleName,
-                subjectName: nextToLearn.subjectName,
-              })
-            }
-            className="w-full flex-1 min-h-[220px] bg-indigo-600 dark:bg-indigo-600 rounded-3xl p-8 text-left relative overflow-hidden group hover:bg-indigo-700 dark:hover:bg-indigo-500 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl shadow-xl shadow-indigo-900/10 dark:shadow-none flex flex-col justify-between active:scale-[0.98]"
-          >
-            <div className="relative z-10 flex flex-col h-full justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-indigo-100 dark:text-indigo-50 text-sm font-medium mb-3 bg-white/10 w-fit px-3 py-1 rounded-full backdrop-blur-sm">
-                  <Clock className="w-4 h-4" />
-                  <span>{nextToLearn.subjectName}</span>
+          {nextToLearn ? (
+            <button
+              onClick={() =>
+                onNavigate({
+                  view: "moduleDetail",
+                  moduleId: nextToLearn.moduleId,
+                  moduleName: nextToLearn.moduleName,
+                  subjectName: nextToLearn.subjectName,
+                })
+              }
+              className="w-full flex-1 min-h-[220px] bg-indigo-600 dark:bg-indigo-600 rounded-3xl p-8 text-left relative overflow-hidden group hover:bg-indigo-700 dark:hover:bg-indigo-500 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl shadow-xl shadow-indigo-900/10 dark:shadow-none flex flex-col justify-between active:scale-[0.98]"
+            >
+              <div className="relative z-10 flex flex-col h-full justify-between">
+                <div>
+                  <div className="flex items-center gap-2 text-indigo-100 dark:text-indigo-50 text-sm font-medium mb-3 bg-white/10 w-fit px-3 py-1 rounded-full backdrop-blur-sm">
+                    <Clock className="w-4 h-4" />
+                    <span>{nextToLearn.subjectName}</span>
+                  </div>
+                  <h4 className="text-white text-3xl font-bold mb-4 pr-8 max-w-md leading-tight">
+                    {nextToLearn.moduleName}
+                  </h4>
                 </div>
-                <h4 className="text-white text-3xl font-bold mb-4 pr-8 max-w-md leading-tight">
-                  {nextToLearn.moduleName}
-                </h4>
+
+                <div className="flex items-center text-indigo-50 font-medium text-base gap-2 bg-white/10 w-fit px-4 py-2 rounded-xl backdrop-blur-sm group-hover:bg-white/20 transition-colors">
+                  <PlayCircle className="w-5 h-5" />
+                  Continue Learning
+                </div>
               </div>
 
-              <div className="flex items-center text-indigo-50 font-medium text-base gap-2 bg-white/10 w-fit px-4 py-2 rounded-xl backdrop-blur-sm group-hover:bg-white/20 transition-colors">
-                <PlayCircle className="w-5 h-5" />
-                Continue Learning
-              </div>
+              {/* Decorative elements */}
+              <div className="absolute right-0 bottom-0 w-64 h-64 bg-white/10 dark:bg-white/5 rounded-full translate-x-1/4 translate-y-1/4 blur-3xl transition-transform group-hover:scale-110" />
+              <div className="absolute top-0 right-10 w-32 h-32 bg-indigo-400/30 rounded-full -translate-y-1/2 blur-2xl" />
+            </button>
+          ) : (
+            <div className="w-full flex-1 min-h-[220px] bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center">
+              <BookMarked className="w-12 h-12 text-slate-300 dark:text-slate-600 mb-4" />
+              <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">No recent activity</h4>
+              <p className="text-slate-500 dark:text-slate-400 max-w-sm text-sm">Start your journey by selecting a subject from the menu to begin learning.</p>
             </div>
-
-            {/* Decorative elements */}
-            <div className="absolute right-0 bottom-0 w-64 h-64 bg-white/10 dark:bg-white/5 rounded-full translate-x-1/4 translate-y-1/4 blur-3xl transition-transform group-hover:scale-110" />
-            <div className="absolute top-0 right-10 w-32 h-32 bg-indigo-400/30 rounded-full -translate-y-1/2 blur-2xl" />
-          </button>
+          )}
         </motion.section>
 
         {/* Semester Snapshot */}
