@@ -23,23 +23,98 @@ export default function App() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [completedItems, setCompletedItems] = useState<string[]>([]);
 
-  const toggleBookmark = (bookmark: Bookmark) => {
-    setBookmarks((prev) => {
-      const exists = prev.find((b) => b.id === bookmark.id);
-      if (exists) {
-        return prev.filter((b) => b.id !== bookmark.id);
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session?.user) return;
+
+      const user_id = sessionData.session.user.id;
+
+      // Fetch Bookmarks
+      const { data: bookmarksData } = await supabase
+        .from("bookmarks")
+        .select("*")
+        .eq("user_id", user_id);
+
+      if (bookmarksData) {
+        setBookmarks(
+          bookmarksData.map((b: any) => ({
+            id: b.item_id,
+            type: b.type,
+            title: b.title,
+            subtitle: b.subtitle,
+            subjectId: b.subject_id,
+            subjectName: b.subject_name,
+          }))
+        );
       }
-      return [...prev, bookmark];
-    });
+
+      // Fetch Completed Items
+      const { data: completedData } = await supabase
+        .from("completed_items")
+        .select("*")
+        .eq("user_id", user_id);
+
+      if (completedData) {
+        setCompletedItems(completedData.map((c: any) => c.item_id));
+      }
+    };
+
+    if (user) {
+      fetchData();
+    } else {
+      setBookmarks([]);
+      setCompletedItems([]);
+    }
+  }, [user]);
+
+  const toggleBookmark = async (bookmark: Bookmark) => {
+    const exists = bookmarks.find((b) => b.id === bookmark.id);
+    const { data: sessionData } = await supabase.auth.getSession();
+    const user_id = sessionData.session?.user?.id;
+    if (!user_id) return;
+
+    if (exists) {
+      setBookmarks((prev) => prev.filter((b) => b.id !== bookmark.id));
+      await supabase
+        .from("bookmarks")
+        .delete()
+        .eq("user_id", user_id)
+        .eq("item_id", bookmark.id);
+    } else {
+      setBookmarks((prev) => [...prev, bookmark]);
+      await supabase.from("bookmarks").insert({
+        user_id,
+        item_id: bookmark.id,
+        type: bookmark.type,
+        title: bookmark.title,
+        subtitle: bookmark.subtitle,
+        subject_id: bookmark.subjectId,
+        subject_name: bookmark.subjectName,
+      });
+    }
   };
 
-  const toggleCompletedItem = (itemId: string) => {
-    setCompletedItems((prev) => {
-      if (prev.includes(itemId)) {
-        return prev.filter((id) => id !== itemId);
-      }
-      return [...prev, itemId];
-    });
+  const toggleCompletedItem = async (itemId: string) => {
+    const isCompleted = completedItems.includes(itemId);
+    const { data: sessionData } = await supabase.auth.getSession();
+    const user_id = sessionData.session?.user?.id;
+    if (!user_id) return;
+
+    if (isCompleted) {
+      setCompletedItems((prev) => prev.filter((id) => id !== itemId));
+      await supabase
+        .from("completed_items")
+        .delete()
+        .eq("user_id", user_id)
+        .eq("item_id", itemId);
+    } else {
+      setCompletedItems((prev) => [...prev, itemId]);
+      await supabase.from("completed_items").insert({
+        user_id,
+        item_id: itemId,
+      });
+    }
   };
 
   useEffect(() => {
