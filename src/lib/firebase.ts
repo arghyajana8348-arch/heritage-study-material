@@ -1,13 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, User } from 'firebase/auth';
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-};
+import firebaseConfig from '../../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -27,6 +20,13 @@ provider.addScope('https://www.googleapis.com/auth/drive.metadata.readonly');
 provider.addScope('https://www.googleapis.com/auth/drive.photos.readonly');
 provider.addScope('https://www.googleapis.com/auth/drive.readonly');
 provider.addScope('https://www.googleapis.com/auth/drive.scripts');
+
+// Request Google Classroom scopes
+provider.addScope('https://www.googleapis.com/auth/classroom.courses.readonly');
+provider.addScope('https://www.googleapis.com/auth/classroom.coursework.me.readonly');
+provider.addScope('https://www.googleapis.com/auth/classroom.courseworkmaterials.readonly');
+provider.addScope('https://www.googleapis.com/auth/classroom.announcements.readonly');
+provider.addScope('https://www.googleapis.com/auth/classroom.student-submissions.me.readonly');
 
 // Flag to indicate if we are in the middle of a sign-in flow.
 let isSigningIn = false;
@@ -64,8 +64,16 @@ export const googleSignIn = async (): Promise<{ user: User; accessToken: string 
     cachedAccessToken = credential.accessToken;
     return { user: result.user, accessToken: cachedAccessToken };
   } catch (error: any) {
-    if (error.code !== 'auth/popup-closed-by-user') {
+    const isPopupClosed =
+      error?.code === 'auth/popup-closed-by-user' ||
+      error?.code === 'auth/cancelled-popup-request' ||
+      error?.message?.includes('closed') ||
+      error?.message?.includes('popup');
+
+    if (!isPopupClosed) {
       console.error('Sign in error:', error);
+    } else {
+      console.warn('Sign-in popup closed/cancelled:', error);
     }
     throw error;
   } finally {

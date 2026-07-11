@@ -94,5 +94,7 @@ export type ViewState =
   | { view: "sprintContent"; subjectId: string; subjectName: string }
   | { view: "quiz"; moduleId: string; moduleName: string; subjectName: string }
   | { view: "adminDashboard" }
+  | { view: "classroom" }
+  | { view: "classroomDetail"; courseId: string; courseName: string }
   | { view: "about" }
   | { view: "account" };

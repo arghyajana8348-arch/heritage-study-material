@@ -20,6 +20,7 @@ import {
   Bell,
   Shield,
   Menu,
+  GraduationCap,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { motion, AnimatePresence } from "motion/react";
@@ -240,6 +241,14 @@ export default function Layout({
       onClick: () => onNavigate({ view: "subjects" }),
     },
     {
+      id: "classroom",
+      icon: <GraduationCap className="w-6 h-6 stroke-[2.5px]" />,
+      label: "Google Classroom",
+      color: "bg-[#A8E6CF]",
+      active: ["classroom", "classroomDetail"].includes(currentView.view),
+      onClick: () => onNavigate({ view: "classroom" }),
+    },
+    {
       id: "sprint",
       icon: <Zap className="w-6 h-6 stroke-[2.5px]" />,
       label: "Exam Sprint",
@@ -263,7 +272,7 @@ export default function Layout({
       id: "about",
       icon: <Info className="w-6 h-6 stroke-[2.5px]" />,
       label: "About Us",
-      color: "bg-[#A8E6CF]",
+      color: "bg-[#E8F0F2]",
       active: currentView.view === "about",
       onClick: () => onNavigate({ view: "about" }),
     },
@@ -281,9 +290,12 @@ export default function Layout({
   let showBack =
     currentView.view !== "dashboard" &&
     currentView.view !== "adminDashboard" &&
+    currentView.view !== "classroom" &&
     currentView.view !== "account";
 
   if (currentView.view === "dashboard") headerTitle = "Overview";
+  if (currentView.view === "classroom") headerTitle = "Google Classroom";
+  if (currentView.view === "classroomDetail") headerTitle = currentView.courseName;
   if (currentView.view === "adminDashboard") headerTitle = "Admin Dashboard";
   if (currentView.view === "account") headerTitle = "Account Settings";
   if (currentView.view === "subjects") headerTitle = "All Subjects";
@@ -623,21 +635,21 @@ export default function Layout({
               <span className="text-[10px] tracking-wide">Sprint</span>
             </button>
             <button
-              onClick={() => onNavigate({ view: "about" })}
+              onClick={() => onNavigate({ view: "classroom" })}
               className={`flex flex-col items-center gap-1 font-bold ${
-                currentView.view === "about" ? "text-slate-950 dark:text-white" : "text-slate-500 dark:text-slate-400"
+                ["classroom", "classroomDetail"].includes(currentView.view) ? "text-slate-950 dark:text-white" : "text-slate-500 dark:text-slate-400"
               }`}
             >
               <div
                 className={`p-1.5 rounded-xl border-2 transition-all ${
-                  currentView.view === "about"
+                  ["classroom", "classroomDetail"].includes(currentView.view)
                     ? "bg-[#A8E6CF] border-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                     : "bg-transparent border-transparent"
                 }`}
               >
-                <Info className="w-5 h-5" />
+                <GraduationCap className="w-5 h-5 text-slate-950 dark:text-white" />
               </div>
-              <span className="text-[10px] tracking-wide">About</span>
+              <span className="text-[10px] tracking-wide">Classroom</span>
             </button>
             <button
               onClick={() => onNavigate({ view: "account" })}

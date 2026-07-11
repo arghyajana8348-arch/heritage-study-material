@@ -5,5 +5,6 @@
   "authDomain": "mineral-bivouac-nj1d7.firebaseapp.com",
   "storageBucket": "mineral-bivouac-nj1d7.firebasestorage.app",
   "messagingSenderId": "1049600909971",
-  "measurementId": ""
+  "measurementId": "",
+  "oAuthClientId": "1049600909971-0v3ikbqsqvr99uem3das4k7drjq5sc12.apps.googleusercontent.com"
 }
