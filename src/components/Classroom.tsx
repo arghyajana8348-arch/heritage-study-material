@@ -215,7 +215,7 @@ export default function Classroom({ onNavigate }: ClassroomProps) {
                 <p className="font-bold text-slate-950 dark:text-white uppercase tracking-wider text-[10px]">How to fix in your Firebase Console:</p>
                 <div className="flex gap-2 items-start">
                   <span className="bg-slate-950 text-white dark:bg-white dark:text-slate-950 w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 font-mono text-[9px]">1</span>
-                  <span>Go directly to your <a href="https://console.firebase.google.com/project/mineral-bivouac-nj1d7/authentication/settings" target="_blank" rel="noopener noreferrer" className="underline font-black text-slate-950 dark:text-white">Firebase Authentication Settings</a>.</span>
+                  <span>Go directly to your <a href="https://console.firebase.google.com/project/heritage-study/authentication/settings" target="_blank" rel="noopener noreferrer" className="underline font-black text-slate-950 dark:text-white">Firebase Authentication Settings</a>.</span>
                 </div>
                 <div className="flex gap-2 items-start">
                   <span className="bg-slate-950 text-white dark:bg-white dark:text-slate-950 w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 font-mono text-[9px]">2</span>

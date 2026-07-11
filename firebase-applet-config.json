@@ -1,10 +1,11 @@
 {
-  "projectId": "mineral-bivouac-nj1d7",
-  "appId": "1:1049600909971:web:b3e33b4185a42495af2366",
-  "apiKey": "AIzaSyAR3ZiAXgNvFGd8eauqve_OVoBbSHNxpL0",
-  "authDomain": "mineral-bivouac-nj1d7.firebaseapp.com",
-  "storageBucket": "mineral-bivouac-nj1d7.firebasestorage.app",
-  "messagingSenderId": "1049600909971",
+  "projectId": "heritage-study",
+  "appId": "1:390295647743:web:7ea90b3c2224733e74a3ca",
+  "apiKey": "AIzaSyDnD9UcXBx9b6aFepC5FV7I4mfJ_oBbdDk",
+  "authDomain": "heritage-study.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-heritagestudypor-5b69ff29-62d5-46d1-b4d2-1bc425172571",
+  "storageBucket": "heritage-study.firebasestorage.app",
+  "messagingSenderId": "390295647743",
   "measurementId": "",
-  "oAuthClientId": "1049600909971-0v3ikbqsqvr99uem3das4k7drjq5sc12.apps.googleusercontent.com"
+  "oAuthClientId": "390295647743-03on0ina8atjjmge55knj11630sdonsj.apps.googleusercontent.com"
 }
