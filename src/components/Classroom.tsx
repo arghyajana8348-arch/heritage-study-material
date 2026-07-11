@@ -69,14 +69,21 @@ export default function Classroom({ onNavigate }: ClassroomProps) {
         fetchCourses(result.accessToken);
       }
     } catch (err: any) {
+      const isUnauthorizedDomain =
+        err?.code === "auth/unauthorized-domain" ||
+        err?.message?.includes("unauthorized-domain");
+
       const isPopupClosed =
-        err?.code === "auth/popup-closed-by-user" ||
+        (err?.code === "auth/popup-closed-by-user" ||
         err?.code === "auth/cancelled-popup-request" ||
         err?.message?.includes("closed") ||
         err?.message?.includes("popup") ||
-        window.self !== window.top;
+        window.self !== window.top) && !isUnauthorizedDomain;
 
-      if (isPopupClosed) {
+      if (isUnauthorizedDomain) {
+        console.warn("Sign-in failed due to unauthorized domain:", err);
+        setError("unauthorized_domain");
+      } else if (isPopupClosed) {
         console.warn("Sign-in popup was closed or cancelled:", err);
         setError("popup_blocked_by_iframe");
       } else {
@@ -195,7 +202,38 @@ export default function Classroom({ onNavigate }: ClassroomProps) {
             Link your college Google Classroom account to access your announcements, coursework, syllabus materials, and assignment submission grades directly in the Study Portal.
           </p>
 
-          {error && error === "popup_blocked_by_iframe" ? (
+          {error && error === "unauthorized_domain" ? (
+            <div className="mb-6 p-4 bg-[#FFB74D] dark:bg-[#D84315]/20 border-[3px] border-slate-950 dark:border-white rounded-xl text-xs font-bold text-slate-950 dark:text-slate-100 text-left shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]">
+              <p className="font-black text-sm uppercase mb-1.5 flex items-center gap-1.5 text-slate-950 dark:text-white">
+                ⚠️ UNAUTHORIZED DOMAIN
+              </p>
+              <p className="leading-relaxed mb-3 text-slate-900 dark:text-slate-300 font-semibold">
+                This website domain (<code className="bg-slate-950 text-white px-1.5 py-0.5 rounded text-[10px] select-all font-mono">{window.location.hostname}</code>) is not authorized in your Firebase Project settings for Google Sign-In.
+              </p>
+              
+              <div className="space-y-2.5 mb-3 text-slate-800 dark:text-slate-300 font-medium text-[11px]">
+                <p className="font-bold text-slate-950 dark:text-white uppercase tracking-wider text-[10px]">How to fix in your Firebase Console:</p>
+                <div className="flex gap-2 items-start">
+                  <span className="bg-slate-950 text-white dark:bg-white dark:text-slate-950 w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 font-mono text-[9px]">1</span>
+                  <span>Go directly to your <a href="https://console.firebase.google.com/project/mineral-bivouac-nj1d7/authentication/settings" target="_blank" rel="noopener noreferrer" className="underline font-black text-slate-950 dark:text-white">Firebase Authentication Settings</a>.</span>
+                </div>
+                <div className="flex gap-2 items-start">
+                  <span className="bg-slate-950 text-white dark:bg-white dark:text-slate-950 w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 font-mono text-[9px]">2</span>
+                  <span>Look under the <strong>Settings</strong> tab, then click on <strong>Authorized domains</strong>.</span>
+                </div>
+                <div className="flex gap-2 items-start">
+                  <span className="bg-slate-950 text-white dark:bg-white dark:text-slate-950 w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 font-mono text-[9px]">3</span>
+                  <span>Click <strong>Add domain</strong> and copy/paste:<br/><code className="bg-white text-slate-950 border border-slate-950 px-1.5 py-0.5 rounded text-[10px] select-all font-mono font-black inline-block mt-1">{window.location.hostname}</code></span>
+                </div>
+              </div>
+              <button
+                onClick={() => setError("")}
+                className="w-full bg-white hover:bg-slate-100 text-slate-950 font-black py-2 px-3 rounded-lg border-2 border-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all text-center block text-[11px] cursor-pointer"
+              >
+                TRY AGAIN 🔄
+              </button>
+            </div>
+          ) : error && error === "popup_blocked_by_iframe" ? (
             <div className="mb-6 p-4 bg-[#FFD54F] border-[3px] border-slate-950 rounded-xl text-xs font-bold text-slate-950 text-left shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
               <p className="font-black text-sm uppercase mb-1.5 flex items-center gap-1.5 text-slate-950">
                 ⚠️ Connection Blocked

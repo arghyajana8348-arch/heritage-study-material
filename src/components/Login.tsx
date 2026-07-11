@@ -161,11 +161,18 @@ export default function Login({ onLogin }: LoginProps) {
           <h1 className="text-3xl font-black text-slate-950 dark:text-white mb-2 text-center uppercase tracking-wide">
             {isSignUp ? "CREATE ACCOUNT" : "WELCOME BACK"}
           </h1>
-          <p className="text-slate-650 dark:text-slate-400 mb-8 leading-relaxed text-center font-bold text-sm">
+          <p className="text-slate-650 dark:text-slate-400 mb-6 leading-relaxed text-center font-bold text-sm">
             {isSignUp 
               ? "Join the ultimate note-taking platform." 
               : "Access your AI-powered workspace."}
           </p>
+
+          {!(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY) && (
+            <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-950/20 border-2 border-amber-500 rounded-xl text-xs text-amber-800 dark:text-amber-400 font-semibold text-left">
+              <span className="font-extrabold uppercase text-amber-900 dark:text-amber-300 block mb-1">⚠️ Supabase Config Required</span>
+              This application requires Supabase connection keys to handle authentication and bookmarks. Please configure <strong>VITE_SUPABASE_URL</strong> and <strong>VITE_SUPABASE_ANON_KEY</strong> in your Vercel project environment variables, then redeploy!
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {isSignUp && (
