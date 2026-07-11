@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { User, Mail, Key, Shield, AlertCircle, CheckCircle2, ChevronRight, LogOut } from "lucide-react";
+import { User, Mail, Key, Shield, AlertCircle, CheckCircle2, LogOut } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 export default function Account({ onLogout }: { onLogout: () => void }) {
@@ -69,7 +69,7 @@ export default function Account({ onLogout }: { onLogout: () => void }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-slate-950 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -80,58 +80,58 @@ export default function Account({ onLogout }: { onLogout: () => void }) {
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-8 pb-24 md:pb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">
+        <h1 className="text-2xl md:text-3xl font-black text-slate-950 dark:text-white uppercase italic tracking-wide mb-2">
           Account Settings
         </h1>
-        <p className="text-slate-500 dark:text-slate-400">
+        <p className="text-slate-655 dark:text-slate-450 font-bold text-sm uppercase tracking-wide">
           Manage your account details and security preferences.
         </p>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-        <div className="p-6 md:p-8 border-b border-slate-200 dark:border-slate-800">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-            <User className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+      <div className="bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] overflow-hidden">
+        <div className="p-6 md:p-8 border-b-[3px] border-slate-950 dark:border-slate-800">
+          <h2 className="text-xl font-black text-slate-950 dark:text-white uppercase italic mb-6 flex items-center gap-2">
+            <User className="w-6 h-6 text-[#FF603D] shrink-0 stroke-[2.5px]" />
             Profile Information
           </h2>
           
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-xs font-black uppercase text-slate-500 dark:text-slate-400 mb-2">
                 Account Name
               </label>
-              <div className="flex items-center bg-slate-50 dark:bg-slate-800/50 rounded-xl px-4 py-3 border border-slate-200 dark:border-slate-700">
-                <User className="w-5 h-5 text-slate-400 mr-3 shrink-0" />
-                <span className="text-slate-900 dark:text-white font-medium">{accountName}</span>
+              <div className="flex items-center bg-slate-50 dark:bg-slate-800/50 rounded-xl px-4 py-3.5 border-2 border-slate-950">
+                <User className="w-5 h-5 text-slate-950 mr-3 shrink-0 stroke-[2px]" />
+                <span className="text-slate-950 dark:text-white font-bold">{accountName}</span>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              <label className="block text-xs font-black uppercase text-slate-500 dark:text-slate-400 mb-2">
                 Email Address
               </label>
-              <div className="flex items-center bg-slate-50 dark:bg-slate-800/50 rounded-xl px-4 py-3 border border-slate-200 dark:border-slate-700">
-                <Mail className="w-5 h-5 text-slate-400 mr-3 shrink-0" />
-                <span className="text-slate-900 dark:text-white font-medium">{userEmail}</span>
+              <div className="flex items-center bg-slate-50 dark:bg-slate-800/50 rounded-xl px-4 py-3.5 border-2 border-slate-950">
+                <Mail className="w-5 h-5 text-slate-950 mr-3 shrink-0 stroke-[2px]" />
+                <span className="text-slate-950 dark:text-white font-bold">{userEmail}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="p-6 md:p-8 border-b border-slate-200 dark:border-slate-800">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-            <Shield className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+        <div className="p-6 md:p-8 border-b-[3px] border-slate-950 dark:border-slate-800">
+          <h2 className="text-xl font-black text-slate-950 dark:text-white uppercase italic mb-6 flex items-center gap-2">
+            <Shield className="w-6 h-6 text-[#C19BF5] shrink-0 stroke-[2.5px]" />
             Security
           </h2>
 
-          <div className="space-y-4">
-            <form onSubmit={handleUpdatePassword} className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4">
+          <div className="space-y-6">
+            <form onSubmit={handleUpdatePassword} className="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border-2 border-slate-950 space-y-4 shadow-[3px_3px_0px_0px_#000]">
               <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2 mb-1">
-                  <Key className="w-4 h-4 text-slate-500" />
+                <h3 className="font-extrabold text-slate-950 dark:text-white flex items-center gap-2 mb-1.5 uppercase italic">
+                  <Key className="w-4 h-4 text-slate-950 stroke-[2px]" />
                   Change Password
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-450 mb-4">
                   Enter a new password to update your account immediately.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -140,15 +140,15 @@ export default function Account({ onLogout }: { onLogout: () => void }) {
                     placeholder="New Password (min 6 characters)"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                    className="flex-1 bg-white dark:bg-slate-950 border-2 border-slate-950 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950 dark:text-white focus:outline-none"
                   />
                   <button
                     type="submit"
                     disabled={updatePasswordLoading || !newPassword}
-                    className={`shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center ${updatePasswordLoading || !newPassword ? "opacity-70 cursor-not-allowed" : ""}`}
+                    className="shrink-0 px-5 py-2.5 bg-[#FF603D] text-slate-950 border-2 border-slate-950 rounded-xl text-sm font-black shadow-[2px_2px_0px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer uppercase tracking-wide"
                   >
                     {updatePasswordLoading ? (
-                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></div>
                     ) : (
                       "Update Password"
                     )}
@@ -157,23 +157,23 @@ export default function Account({ onLogout }: { onLogout: () => void }) {
               </div>
             </form>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-slate-50 dark:bg-slate-800/50 rounded-xl border-2 border-slate-950 gap-4 shadow-[3px_3px_0px_0px_#000]">
               <div>
-                <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Key className="w-4 h-4 text-slate-500" />
+                <h3 className="font-extrabold text-slate-950 dark:text-white flex items-center gap-2 uppercase italic">
+                  <Key className="w-4 h-4 text-slate-950 stroke-[2px]" />
                   Reset Password via Email
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                  A password reset link will be sent to your email address.
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-450 mt-1.5 leading-relaxed">
+                  A password reset link will be sent to your registered email address.
                 </p>
               </div>
               <button
                 onClick={handleResetPassword}
                 disabled={resetPasswordLoading}
-                className={`shrink-0 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center ${resetPasswordLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+                className="shrink-0 px-5 py-2.5 bg-white dark:bg-slate-800 border-2 border-slate-950 rounded-xl text-sm font-black text-slate-950 dark:text-white shadow-[2px_2px_0px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer uppercase tracking-wide"
               >
                 {resetPasswordLoading ? (
-                  <div className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 dark:border-slate-600 dark:border-t-slate-300 rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   "Reset Password"
                 )}
@@ -181,29 +181,33 @@ export default function Account({ onLogout }: { onLogout: () => void }) {
             </div>
             
             {message && (
-              <div className={`p-4 rounded-xl flex items-start gap-3 ${message.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300'}`}>
+              <div className={`p-4 rounded-xl border-2 flex items-start gap-3 ${
+                message.type === 'success' 
+                  ? 'bg-emerald-50 border-emerald-500 text-emerald-800' 
+                  : 'bg-red-50 border-red-500 text-red-800'
+              }`}>
                 {message.type === 'success' ? (
-                  <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5 stroke-[2.5px]" />
                 ) : (
-                  <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 stroke-[2.5px]" />
                 )}
-                <p className="text-sm font-medium">{message.text}</p>
+                <p className="text-sm font-black uppercase tracking-wide">{message.text}</p>
               </div>
             )}
           </div>
         </div>
 
-        <div className="p-6 md:p-8">
-           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-            <AlertCircle className="w-6 h-6 text-red-500 dark:text-red-400" />
-            Account Actions
+        <div className="p-6 md:p-8 bg-slate-50 dark:bg-slate-900/60">
+           <h2 className="text-xl font-black text-slate-950 dark:text-white mb-6 flex items-center gap-2 uppercase italic">
+            <AlertCircle className="w-6 h-6 text-red-655 dark:text-red-400 stroke-[2.5px]" />
+            Danger Zone
           </h2>
           <button
             onClick={onLogout}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20 rounded-xl font-semibold transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3.5 bg-red-100 dark:bg-red-500/20 text-red-655 dark:text-red-400 border-2 border-red-500 rounded-xl font-black shadow-[3px_3px_0px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer uppercase tracking-wider text-xs"
           >
-            <LogOut className="w-5 h-5" />
-            Sign Out
+            <LogOut className="w-4 h-4 stroke-[2.5px]" />
+            Sign Out of Account
           </button>
         </div>
       </div>

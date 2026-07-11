@@ -36,7 +36,7 @@ export default function ModuleDetail({
 
   if (!module || !subject)
     return (
-      <div className="p-6 text-center text-slate-500">Module not found</div>
+      <div className="p-6 text-center font-bold text-slate-500">Module not found</div>
     );
 
   // Calculate subject progress dynamically
@@ -74,44 +74,44 @@ export default function ModuleDetail({
   return (
     <div className="pb-24 md:pb-8">
       {/* Module Header */}
-      <div className="bg-white dark:bg-slate-900 px-6 py-8 md:p-10 md:rounded-3xl border-b md:border border-slate-100 dark:border-slate-800 transition-colors mb-6 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+      <div className="bg-[#88D3E6] px-6 py-8 md:p-10 border-[3px] border-slate-950 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] text-slate-950 mb-8 relative overflow-hidden">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
           <div>
-            <div className="inline-block px-3 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 text-xs font-bold rounded-lg mb-4 tracking-wider uppercase">
+            <div className="inline-block px-3 py-1 bg-white border-2 border-slate-950 text-slate-950 text-xs font-black rounded-lg mb-4 tracking-wider uppercase shadow-[2px_2px_0px_0px_#000] rotate-[-1deg]">
               Module {module.number}
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight tracking-tight">
+            <h2 className="text-3xl md:text-5xl font-black leading-none uppercase italic mb-3">
               {module.name}
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 mt-3 text-lg font-medium">
+            <p className="text-slate-800 mt-2 text-lg font-extrabold uppercase tracking-wide">
               {subjectName}
             </p>
           </div>
 
-          <div className="w-full md:w-64 bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-800 shrink-0">
-            <div className="flex justify-between items-end mb-2">
-              <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+          <div className="w-full md:w-64 bg-white border-[3px] border-slate-950 rounded-2xl p-5 shadow-[4px_4px_0px_0px_#000] shrink-0 text-slate-955">
+            <div className="flex justify-between items-end mb-2.5">
+              <span className="text-xs font-black uppercase text-slate-800">
                 Subject Progress
               </span>
-              <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
+              <span className="text-sm font-black text-slate-950 italic">
                 {Math.round(progressPercentage)}%
               </span>
             </div>
-            <div className="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div className="h-3 w-full bg-slate-100 border-2 border-slate-950 rounded-full overflow-hidden">
               <div
-                className="h-full bg-indigo-500 dark:bg-indigo-500 rounded-full transition-all duration-500 ease-out"
+                className="h-full bg-[#A8E6CF] border-r-2 border-slate-950 transition-all duration-500 ease-out"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium text-right">
-              {completedTasks} of {totalTasks} tasks completed
+            <p className="text-[10px] font-bold text-slate-600 mt-2.5 text-right">
+              {completedTasks} / {totalTasks} tasks done
             </p>
           </div>
         </div>
       </div>
 
-      <div className="p-4 md:p-0">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+      <div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Study Materials */}
           {(module.content.studyMaterial.materials && module.content.studyMaterial.materials.length > 0) ? (
             module.content.studyMaterial.materials.map((mat, idx) => (
@@ -121,8 +121,8 @@ export default function ModuleDetail({
                 title={mat.title}
                 description={mat.description}
                 available={true}
-                icon={<FileText className="w-8 h-8" />}
-                actionIcon={<Download className="w-5 h-5" />}
+                icon={<FileText className="w-8 h-8 stroke-[2px]" />}
+                actionIcon={<Download className="w-5 h-5 stroke-[2.5px]" />}
                 actionLabel="Download PDF"
                 color="blue"
                 delay={0.1 + (idx * 0.05)}
@@ -137,8 +137,8 @@ export default function ModuleDetail({
               title={module.content.studyMaterial.title}
               description={module.content.studyMaterial.description}
               available={module.content.studyMaterial.available}
-              icon={<FileText className="w-8 h-8" />}
-              actionIcon={<Download className="w-5 h-5" />}
+              icon={<FileText className="w-8 h-8 stroke-[2px]" />}
+              actionIcon={<Download className="w-5 h-5 stroke-[2.5px]" />}
               actionLabel="Download PDF"
               color="blue"
               delay={0.1}
@@ -154,8 +154,8 @@ export default function ModuleDetail({
             title={module.content.quiz.title}
             description={module.content.quiz.description}
             available={module.content.quiz.available}
-            icon={<CheckSquare className="w-8 h-8" />}
-            actionIcon={<Play className="w-5 h-5" />}
+            icon={<CheckSquare className="w-8 h-8 stroke-[2px]" />}
+            actionIcon={<Play className="w-5 h-5 stroke-[2.5px]" />}
             actionLabel="Start Quiz"
             color="emerald"
             delay={0.2}
@@ -177,8 +177,8 @@ export default function ModuleDetail({
             title={module.content.mindMap.title}
             description={module.content.mindMap.description}
             available={module.content.mindMap.available}
-            icon={<Network className="w-8 h-8" />}
-            actionIcon={<Maximize2 className="w-5 h-5" />}
+            icon={<Network className="w-8 h-8 stroke-[2px]" />}
+            actionIcon={<Maximize2 className="w-5 h-5 stroke-[2.5px]" />}
             actionLabel="View Map"
             color="purple"
             delay={0.3}
@@ -228,25 +228,22 @@ function ContentCard({
 }: ContentCardProps) {
   const colorMap = {
     blue: {
-      bg: "bg-blue-50 dark:bg-blue-500/10",
-      text: "text-blue-600 dark:text-blue-400",
-      border: "border-blue-100 dark:border-blue-500/20",
+      bg: "bg-[#88D3E6]",
+      shadow: "shadow-[4px_4px_0px_0px_#88D3E6]",
       activeBtn:
-        "bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none",
+        "bg-[#88D3E6] border-[3px] border-slate-950 text-slate-955 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
     },
     emerald: {
-      bg: "bg-emerald-50 dark:bg-emerald-500/10",
-      text: "text-emerald-600 dark:text-emerald-400",
-      border: "border-emerald-100 dark:border-emerald-500/20",
+      bg: "bg-[#C19BF5]",
+      shadow: "shadow-[4px_4px_0px_0px_#C19BF5]",
       activeBtn:
-        "bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white shadow-md shadow-emerald-200 dark:shadow-none",
+        "bg-[#C19BF5] border-[3px] border-slate-950 text-slate-955 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
     },
     purple: {
-      bg: "bg-purple-50 dark:bg-purple-500/10",
-      text: "text-purple-600 dark:text-purple-400",
-      border: "border-purple-100 dark:border-purple-500/20",
+      bg: "bg-[#FFD54F]",
+      shadow: "shadow-[4px_4px_0px_0px_#FFD54F]",
       activeBtn:
-        "bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white shadow-md shadow-purple-200 dark:shadow-none",
+        "bg-[#FFD54F] border-[3px] border-slate-950 text-slate-955 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
     },
   };
 
@@ -257,24 +254,24 @@ function ContentCard({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className={`bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all flex flex-col ${!available ? "opacity-75 grayscale-[0.2]" : ""}`}
+      className={`bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white p-6 md:p-8 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex flex-col ${!available ? "opacity-70 grayscale-[0.3]" : ""}`}
     >
       <div className="flex justify-between items-start mb-6">
         <div
-          className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 ${style.bg} ${style.text}`}
+          className={`w-16 h-16 rounded-xl flex items-center justify-center shrink-0 border-2 border-slate-950 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] rotate-[-3deg] ${style.bg} text-slate-955`}
         >
           {icon}
         </div>
         {available && onToggleCompleted && (
           <button
             onClick={onToggleCompleted}
-            className={`transition-colors p-1 rounded-full ${isCompleted ? "text-emerald-500" : "text-slate-300 dark:text-slate-600 hover:text-slate-400"}`}
+            className="w-9 h-9 rounded-full border-2 border-slate-950 bg-white flex items-center justify-center shadow-[1px_1px_0px_0px_#000] active:translate-y-0.5 transition-all text-slate-950 cursor-pointer"
             title={isCompleted ? "Mark as uncompleted" : "Mark as completed"}
           >
             {isCompleted ? (
-              <CheckCircle2 className="w-7 h-7" />
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 fill-emerald-50" />
             ) : (
-              <Circle className="w-7 h-7" />
+              <Circle className="w-5 h-5 text-slate-400" />
             )}
           </button>
         )}
@@ -282,14 +279,14 @@ function ContentCard({
 
       <div className="flex-1 flex flex-col">
         <p
-          className={`text-xs font-bold uppercase tracking-widest mb-2 ${style.text}`}
+          className="text-[10px] font-black uppercase tracking-wider mb-2 text-slate-500 dark:text-slate-400"
         >
           {type}
         </p>
-        <h3 className="font-bold text-slate-900 dark:text-white text-xl mb-2">
+        <h3 className="font-black text-slate-950 dark:text-white text-xl uppercase italic mb-2 leading-none">
           {title}
         </h3>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mb-8 leading-relaxed font-medium">
+        <p className="text-slate-650 dark:text-slate-400 text-sm mb-6 leading-relaxed font-bold">
           {description}
         </p>
 
@@ -297,15 +294,15 @@ function ContentCard({
           {available ? (
             <button
               onClick={onAction}
-              className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all active:scale-[0.98] ${style.activeBtn}`}
+              className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-black uppercase text-sm tracking-wide transition-all cursor-pointer ${style.activeBtn}`}
             >
               {actionIcon}
               {actionLabel}
             </button>
           ) : (
-            <div className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 cursor-not-allowed transition-colors">
-              <Lock className="w-4 h-4" />
-              Not available yet
+            <div className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-black uppercase text-sm tracking-wide bg-slate-100 dark:bg-slate-800 text-slate-455 dark:text-slate-500 border-2 border-slate-950/20 dark:border-slate-800/80 cursor-not-allowed">
+              <Lock className="w-4 h-4 stroke-[3px]" />
+              Not available
             </div>
           )}
         </div>

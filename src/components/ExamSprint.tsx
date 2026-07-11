@@ -16,34 +16,33 @@ export default function ExamSprint({ hasPaid, onNavigate, onPay }: ExamSprintPro
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full bg-slate-900 rounded-3xl p-8 shadow-2xl relative overflow-hidden"
+          className="max-w-md w-full bg-slate-950 border-[3px] border-slate-950 dark:border-white rounded-2xl p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] relative overflow-hidden"
         >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
           <div className="relative z-10 flex flex-col items-center">
-            <div className="w-20 h-20 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mb-6">
-              <Lock className="w-10 h-10" />
+            <div className="w-20 h-20 bg-[#FF603D] border-[3px] border-slate-950 text-slate-950 rounded-2xl flex items-center justify-center mb-6 shadow-[3px_3px_0px_0px_#000] rotate-[-4deg]">
+              <Lock className="w-10 h-10 stroke-[2.5px]" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Unlock Exam Sprint</h2>
-            <p className="text-slate-400 font-medium mb-8">
+            <h2 className="text-2xl font-black text-white mb-2 uppercase italic tracking-wide">Unlock Exam Sprint</h2>
+            <p className="text-slate-350 font-bold mb-8 text-sm leading-relaxed">
               Get premium access to curated cheat sheets, short notes, predicted important questions, and more across all subjects.
             </p>
-            <div className="w-full bg-slate-800/50 rounded-2xl p-4 mb-8 text-left border border-slate-700/50">
-              <div className="flex items-center gap-3 mb-3">
-                <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                <span className="text-sm font-semibold text-slate-200">Final Suggestions</span>
+            <div className="w-full bg-slate-900 border-2 border-slate-700 rounded-xl p-5 mb-8 text-left">
+              <div className="flex items-center gap-3 mb-3.5">
+                <ShieldCheck className="w-5 h-5 text-[#A8E6CF] stroke-[2.5px]" />
+                <span className="text-sm font-extrabold text-slate-200 uppercase">Final Suggestions</span>
               </div>
-              <div className="flex items-center gap-3 mb-3">
-                <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                <span className="text-sm font-semibold text-slate-200">Typed Short Notes</span>
+              <div className="flex items-center gap-3 mb-3.5">
+                <ShieldCheck className="w-5 h-5 text-[#A8E6CF] stroke-[2.5px]" />
+                <span className="text-sm font-extrabold text-slate-200 uppercase">Typed Short Notes</span>
               </div>
               <div className="flex items-center gap-3">
-                <ShieldCheck className="w-5 h-5 text-emerald-400" />
-                <span className="text-sm font-semibold text-slate-200">Scanned Topper Notes</span>
+                <ShieldCheck className="w-5 h-5 text-[#A8E6CF] stroke-[2.5px]" />
+                <span className="text-sm font-extrabold text-slate-200 uppercase">Scanned Topper Notes</span>
               </div>
             </div>
             <button
               onClick={onPay}
-              className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold py-4 px-6 rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95"
+              className="w-full bg-[#A8E6CF] border-[3px] border-slate-950 text-slate-955 font-black py-4 px-6 rounded-xl shadow-[4px_4px_0px_0px_#000] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer uppercase tracking-wider text-base"
             >
               Unlock Now for ₹199
             </button>
@@ -54,44 +53,49 @@ export default function ExamSprint({ hasPaid, onNavigate, onPay }: ExamSprintPro
   }
 
   return (
-    <div className="p-4 md:p-0 pb-24 md:pb-8">
-      <div className="flex items-center gap-3 mb-8 px-2 md:px-0">
-        <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-500">
-          <Zap className="w-6 h-6" />
+    <div className="pb-24 md:pb-8">
+      <div className="flex items-center gap-4 mb-8 px-2 md:px-0 bg-[#FF603D] border-[3px] border-slate-950 p-6 rounded-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] text-slate-950 max-w-xl">
+        <div className="w-14 h-14 bg-white border-2 border-slate-950 rounded-xl flex items-center justify-center shadow-[2px_2px_0px_0px_#000] rotate-[-2deg]">
+          <Zap className="w-7 h-7 text-slate-950 stroke-[3px]" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Exam Sprint</h2>
-          <p className="text-slate-500 dark:text-slate-400 font-medium text-sm">Select a subject to access premium content</p>
+          <h2 className="text-2xl font-black uppercase italic leading-none mb-1">Exam Sprint</h2>
+          <p className="text-slate-800 font-extrabold text-xs uppercase tracking-wide">Select a subject to access premium content</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-        {subjects.map((sub, index) => (
-          <motion.button
-            key={sub.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            onClick={() => onNavigate({ 
-              view: 'sprintContent', 
-              subjectId: sub.id,
-              subjectName: sub.name
-            })}
-            className="w-full flex items-center justify-between p-6 rounded-3xl border transition-all text-left bg-emerald-50 dark:bg-emerald-500/5 border-emerald-100 dark:border-emerald-500/20 shadow-sm hover:shadow-md hover:border-emerald-200 dark:hover:border-emerald-500/30 group"
-          >
-            <div className="flex flex-col">
-              <span className="text-xs font-bold tracking-widest text-emerald-600/80 dark:text-emerald-400/80 uppercase mb-2 block">
-                {sub.code}
-              </span>
-              <span className="text-xl font-bold text-emerald-900 dark:text-emerald-300 mb-1 group-hover:text-emerald-700 dark:group-hover:text-emerald-200 transition-colors">
-                {sub.name}
-              </span>
-            </div>
-            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-emerald-100 dark:bg-emerald-500/20">
-              <ChevronRight className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-            </div>
-          </motion.button>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {subjects.map((sub, index) => {
+          const sprintColors = ["bg-[#A8E6CF]", "bg-[#FFD54F]", "bg-[#C19BF5]", "bg-[#88D3E6]"];
+          const color = sprintColors[index % sprintColors.length];
+          
+          return (
+            <motion.button
+              key={sub.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              onClick={() => onNavigate({ 
+                view: 'sprintContent', 
+                subjectId: sub.id,
+                subjectName: sub.name
+              })}
+              className={`w-full flex items-center justify-between p-6 rounded-2xl border-[3px] border-slate-950 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 transition-all text-slate-950 text-left cursor-pointer ${color}`}
+            >
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black tracking-widest text-slate-950 dark:text-slate-950 bg-white/40 border border-slate-955 px-2 py-0.5 rounded w-fit mb-2 uppercase">
+                  {sub.code}
+                </span>
+                <span className="text-xl font-black text-slate-950 dark:text-slate-950 uppercase italic leading-snug">
+                  {sub.name}
+                </span>
+              </div>
+              <div className="w-10 h-10 rounded-full border-2 border-slate-950 bg-white flex items-center justify-center shadow-[2px_2px_0px_0px_#000] shrink-0">
+                <ChevronRight className="w-5 h-5 text-slate-955 stroke-[2.5px]" />
+              </div>
+            </motion.button>
+          );
+        })}
       </div>
     </div>
   );

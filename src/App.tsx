@@ -199,6 +199,7 @@ export default function App() {
             setHasPaid={setHasPaid}
             bookmarks={bookmarks}
             completedItems={completedItems}
+            onToggleBookmark={toggleBookmark}
           />
         );
       case "subjects":

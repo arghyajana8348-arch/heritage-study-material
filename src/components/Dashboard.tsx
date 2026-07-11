@@ -21,6 +21,7 @@ interface DashboardProps {
   setHasPaid: (val: boolean) => void;
   bookmarks: Bookmark[];
   completedItems: string[];
+  onToggleBookmark: (bookmark: Bookmark) => void;
 }
 
 export default function Dashboard({
@@ -30,6 +31,7 @@ export default function Dashboard({
   setHasPaid,
   bookmarks,
   completedItems,
+  onToggleBookmark,
 }: DashboardProps) {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [checkoutState, setCheckoutState] = useState<
@@ -152,16 +154,16 @@ export default function Dashboard({
   }
 
   return (
-    <div className="p-4 md:p-0 space-y-8 md:space-y-12 pb-24 md:pb-8">
+    <div className="space-y-8 md:space-y-12 pb-24 md:pb-8">
       {/* Welcome Section */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h2 className="text-base font-medium text-slate-500 dark:text-slate-400 mb-1">
+        <h2 className="text-sm font-extrabold uppercase tracking-wide text-slate-800 dark:text-slate-300 mb-1">
           {getGreeting()}
         </h2>
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+        <h1 className="text-3xl md:text-5xl font-black text-slate-950 dark:text-white uppercase italic tracking-wide">
           {displayName}
         </h1>
       </motion.div>
@@ -175,7 +177,7 @@ export default function Dashboard({
           className="lg:col-span-2 flex flex-col"
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+            <h3 className="text-xl font-black uppercase text-slate-950 dark:text-white">
               Continue Learning
             </h3>
           </div>
@@ -190,34 +192,33 @@ export default function Dashboard({
                   subjectName: nextToLearn.subjectName,
                 })
               }
-              className="w-full flex-1 min-h-[220px] bg-indigo-600 dark:bg-indigo-600 rounded-3xl p-8 text-left relative overflow-hidden group hover:bg-indigo-700 dark:hover:bg-indigo-500 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl shadow-xl shadow-indigo-900/10 dark:shadow-none flex flex-col justify-between active:scale-[0.98]"
+              className="w-full flex-1 min-h-[220px] bg-[#C19BF5] border-[3px] border-slate-950 text-slate-950 p-8 text-left relative overflow-hidden group shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_#FFD54F] rounded-2xl hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all flex flex-col justify-between cursor-pointer"
             >
-              <div className="relative z-10 flex flex-col h-full justify-between">
+              <div className="relative z-10 flex flex-col h-full justify-between gap-6">
                 <div>
-                  <div className="flex items-center gap-2 text-indigo-100 dark:text-indigo-50 text-sm font-medium mb-3 bg-white/10 w-fit px-3 py-1 rounded-full backdrop-blur-sm">
-                    <Clock className="w-4 h-4" />
+                  <div className="flex items-center gap-2 text-slate-950 text-xs font-black uppercase tracking-wider bg-white/40 border-2 border-slate-950 w-fit px-3 py-1 rounded-full">
+                    <Clock className="w-3.5 h-3.5 stroke-[2.5px]" />
                     <span>{nextToLearn.subjectName}</span>
                   </div>
-                  <h4 className="text-white text-3xl font-bold mb-4 pr-8 max-w-md leading-tight">
+                  <h4 className="text-slate-950 text-3xl font-black mt-4 pr-8 max-w-md leading-none uppercase italic">
                     {nextToLearn.moduleName}
                   </h4>
                 </div>
 
-                <div className="flex items-center text-indigo-50 font-medium text-base gap-2 bg-white/10 w-fit px-4 py-2 rounded-xl backdrop-blur-sm group-hover:bg-white/20 transition-colors">
-                  <PlayCircle className="w-5 h-5" />
+                <div className="flex items-center text-slate-950 font-black text-sm uppercase tracking-wide gap-2 bg-[#FFD54F] border-2 border-slate-950 w-fit px-4 py-2 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:translate-x-0.5 transition-transform">
+                  <PlayCircle className="w-5 h-5 stroke-[2.5px]" />
                   Continue Learning
                 </div>
               </div>
 
               {/* Decorative elements */}
-              <div className="absolute right-0 bottom-0 w-64 h-64 bg-white/10 dark:bg-white/5 rounded-full translate-x-1/4 translate-y-1/4 blur-3xl transition-transform group-hover:scale-110" />
-              <div className="absolute top-0 right-10 w-32 h-32 bg-indigo-400/30 rounded-full -translate-y-1/2 blur-2xl" />
+              <div className="absolute right-0 bottom-0 w-48 h-48 bg-white/20 rounded-full translate-x-1/4 translate-y-1/4" />
             </button>
           ) : (
-            <div className="w-full flex-1 min-h-[220px] bg-slate-50 dark:bg-slate-800/50 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center">
-              <BookMarked className="w-12 h-12 text-slate-300 dark:text-slate-600 mb-4" />
-              <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">No recent activity</h4>
-              <p className="text-slate-500 dark:text-slate-400 max-w-sm text-sm">Start your journey by selecting a subject from the menu to begin learning.</p>
+            <div className="w-full flex-1 min-h-[220px] bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-2xl p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex flex-col items-center justify-center text-center">
+              <BookMarked className="w-12 h-12 text-slate-950 dark:text-white mb-4 stroke-[2.5px]" />
+              <h4 className="text-xl font-black text-slate-950 dark:text-white uppercase mb-2">No recent activity</h4>
+              <p className="text-slate-650 dark:text-slate-400 max-w-sm text-sm font-bold leading-relaxed">Start your journey by selecting a subject from the menu to begin learning.</p>
             </div>
           )}
         </motion.section>
@@ -230,36 +231,36 @@ export default function Dashboard({
           className="flex flex-col h-full"
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+            <h3 className="text-xl font-black uppercase text-slate-950 dark:text-white">
               Current Semester
             </h3>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 dark:border-slate-800 transition-colors flex-1 flex flex-col justify-center">
+          <div className="bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-2xl p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] flex-1 flex flex-col justify-between">
             <div className="flex flex-col gap-6">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl flex items-center justify-center">
-                  <TrendingUp className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
+                <div className="w-14 h-14 bg-[#A8E6CF] border-2 border-slate-950 rounded-xl flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <TrendingUp className="w-7 h-7 text-slate-950 stroke-[2.5px]" />
                 </div>
                 <div>
-                  <p className="text-slate-900 dark:text-white font-bold text-xl">
-                    Overall Progress
+                  <p className="text-slate-950 dark:text-white font-black text-lg uppercase tracking-wide leading-tight">
+                    Progress
                   </p>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mt-0.5">
-                    {completedModulesCount} of {totalModules} modules
+                  <p className="text-slate-655 dark:text-slate-450 text-xs font-bold mt-0.5">
+                    {completedModulesCount} / {totalModules} modules done
                   </p>
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-end mb-2">
-                  <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                  <div className="text-3xl font-black text-slate-950 dark:text-white italic">
                     {overallProgressPercentage}%
                   </div>
                 </div>
-                <div className="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-4 w-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-950 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
+                    className="h-full bg-[#A8E6CF] border-r-2 border-slate-950"
                     style={{ width: `${overallProgressPercentage}%` }}
                   />
                 </div>
@@ -272,7 +273,7 @@ export default function Dashboard({
                   view: "subjects",
                 })
               }
-              className="w-full mt-8 py-3.5 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-sm rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              className="w-full mt-6 py-3.5 bg-[#FFD54F] border-[3px] border-slate-950 text-slate-950 font-black text-sm uppercase tracking-wide rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer"
             >
               View All Subjects
             </button>
@@ -286,13 +287,14 @@ export default function Dashboard({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-4">
+        <h3 className="text-xl font-black uppercase text-slate-950 dark:text-white mb-4">
           Quick Jump
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <QuickLink
             title="Mathematics-I"
             code="MTH1101"
+            color="bg-[#FFD54F]"
             onClick={() =>
               onNavigate({
                 view: "modules",
@@ -304,6 +306,7 @@ export default function Dashboard({
           <QuickLink
             title="Physics-I"
             code="PHY1001"
+            color="bg-[#88D3E6]"
             onClick={() =>
               onNavigate({
                 view: "modules",
@@ -315,6 +318,7 @@ export default function Dashboard({
           <QuickLink
             title="Electronics Devices"
             code="ECE1001"
+            color="bg-[#C19BF5]"
             onClick={() =>
               onNavigate({
                 view: "modules",
@@ -326,6 +330,7 @@ export default function Dashboard({
           <QuickLink
             title="Universal Human Values"
             code="HUM1002"
+            color="bg-[#FFD3B6]"
             onClick={() =>
               onNavigate({
                 view: "modules",
@@ -343,61 +348,78 @@ export default function Dashboard({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
-        <div className="flex items-center gap-2 mb-4 text-slate-800 dark:text-slate-200">
-          <BookmarkIcon className="w-5 h-5" />
-          <h3 className="text-xl font-semibold">Bookmarks</h3>
+        <div className="flex items-center gap-2 mb-4 text-slate-950 dark:text-white">
+          <BookmarkIcon className="w-5 h-5 stroke-[2.5px]" />
+          <h3 className="text-xl font-black uppercase">Bookmarks</h3>
         </div>
 
         {bookmarks.length === 0 ? (
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 text-center shadow-sm">
-            <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400">
-              <BookmarkIcon className="w-8 h-8" />
+          <div className="bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-2xl p-8 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]">
+            <div className="w-14 h-14 bg-slate-100 dark:bg-slate-800 border-2 border-slate-950 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-950 dark:text-white shadow-[2px_2px_0px_0px_#000]">
+              <BookmarkIcon className="w-6 h-6 stroke-[2.5px]" />
             </div>
-            <p className="text-slate-500 font-medium">
+            <p className="text-slate-650 dark:text-slate-400 font-bold">
               You haven't bookmarked any subjects or modules yet.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {bookmarks.map((bookmark) => (
-              <button
-                key={bookmark.id}
-                onClick={() => {
-                  if (bookmark.type === "subject") {
-                    onNavigate({
-                      view: "modules",
-                      subjectId: bookmark.id,
-                      subjectName: bookmark.title,
-                    });
-                  } else {
-                    onNavigate({
-                      view: "moduleDetail",
-                      moduleId: bookmark.id,
-                      moduleName: bookmark.title,
-                      subjectName: bookmark.subjectName || "",
-                    });
-                  }
-                }}
-                className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-700 text-left transition-all group flex items-start justify-between"
-              >
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded block w-fit">
-                      {bookmark.type}
-                    </span>
-                    <span className="text-xs font-medium text-slate-400 dark:text-slate-500 line-clamp-1">
-                      {bookmark.subtitle}
-                    </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {bookmarks.map((bookmark, index) => {
+              const bookmarkColors = [
+                "bg-[#FFD54F]", // Yellow
+                "bg-[#C19BF5]", // Purple
+                "bg-[#88D3E6]", // Blue
+                "bg-[#FFD3B6]", // Peach
+              ];
+              const cardColor = bookmarkColors[index % bookmarkColors.length];
+
+              return (
+                <div
+                  key={bookmark.id}
+                  onClick={() => {
+                    if (bookmark.type === "subject") {
+                      onNavigate({
+                        view: "modules",
+                        subjectId: bookmark.id,
+                        subjectName: bookmark.title,
+                      });
+                    } else {
+                      onNavigate({
+                        view: "moduleDetail",
+                        moduleId: bookmark.id,
+                        moduleName: bookmark.title,
+                        subjectName: bookmark.subjectName || "",
+                      });
+                    }
+                  }}
+                  className={`${cardColor} p-5 rounded-2xl border-[3px] border-slate-950 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all group flex items-start justify-between cursor-pointer text-slate-950 dark:text-slate-950`}
+                >
+                  <div className="flex-1 pr-3 truncate text-slate-950 dark:text-slate-950">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-[10px] font-black text-slate-950 dark:text-slate-950 uppercase tracking-widest bg-white/40 border border-slate-950 px-2 py-0.5 rounded">
+                        {bookmark.type}
+                      </span>
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-800 truncate max-w-[120px]">
+                        {bookmark.subtitle}
+                      </span>
+                    </div>
+                    <h4 className="font-black text-lg text-slate-950 dark:text-slate-950 leading-tight uppercase italic group-hover:underline truncate">
+                      {bookmark.title}
+                    </h4>
                   </div>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200 block group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
-                    {bookmark.title}
-                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleBookmark(bookmark);
+                    }}
+                    className="w-10 h-10 rounded-full border-2 border-slate-950 bg-white flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-[#FF603D] hover:scale-105 active:translate-y-0.5 transition-all cursor-pointer text-slate-950"
+                    title="Remove Bookmark"
+                  >
+                    <BookmarkIcon className="w-4 h-4 text-slate-950 fill-slate-950 stroke-[2px]" />
+                  </button>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-500/10 transition-colors shrink-0">
-                  <BookmarkIcon className="w-4 h-4 text-indigo-500 dark:text-indigo-400 fill-indigo-500 dark:fill-indigo-400" />
-                </div>
-              </button>
-            ))}
+              );
+            })}
           </div>
         )}
       </motion.section>
@@ -410,60 +432,60 @@ export default function Dashboard({
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative border border-slate-200 dark:border-slate-800"
+              className="bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-md overflow-hidden relative"
             >
               {checkoutState === "idle" && (
                 <>
-                  <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                  <div className="p-6 border-b-[3px] border-slate-950 dark:border-slate-800 flex items-center justify-between bg-[#C19BF5]">
+                    <h3 className="text-xl font-black text-slate-950 uppercase italic tracking-wide">
                       Secure Checkout
                     </h3>
                     <button
                       onClick={() => setIsCheckoutOpen(false)}
-                      className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                      className="w-8 h-8 rounded-full border-2 border-slate-950 bg-white flex items-center justify-center text-slate-950 hover:scale-115 active:scale-95 transition-all cursor-pointer"
                     >
-                      <X className="w-6 h-6" />
+                      <X className="w-4 h-4 stroke-[3px]" />
                     </button>
                   </div>
                   <div className="p-6 space-y-6">
-                    <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
-                      <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center shrink-0">
-                        <CreditCard className="w-6 h-6" />
+                    <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border-2 border-slate-950">
+                      <div className="w-12 h-12 bg-[#FFD54F] border-2 border-slate-950 text-slate-950 rounded-xl flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_#000]">
+                        <CreditCard className="w-6 h-6 stroke-[2.5px]" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-slate-900 dark:text-white leading-tight mb-1">
+                        <h4 className="font-extrabold text-slate-950 dark:text-white leading-tight uppercase italic mb-0.5">
                           Last Minute Exam Kit
                         </h4>
-                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                        <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                           Full Sem 1 Access
                         </p>
                       </div>
-                      <div className="ml-auto font-black text-xl text-slate-900 dark:text-white">
+                      <div className="ml-auto font-black text-2xl text-slate-950 dark:text-white">
                         ₹199
-                      </div>
+      </div>
                     </div>
 
                     <div className="space-y-4">
-                      <label className="block text-sm font-bold text-slate-700 dark:text-slate-300">
+                      <label className="block text-sm font-black uppercase text-slate-950 dark:text-white">
                         Card Details
                       </label>
                       <input
                         type="text"
                         placeholder="Card Number"
-                        className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium transition-all"
+                        className="w-full px-4 py-3 border-2 border-slate-950 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl focus:outline-none font-bold"
                         defaultValue="4242 4242 4242 4242"
                       />
                       <div className="grid grid-cols-2 gap-4">
                         <input
                           type="text"
                           placeholder="MM/YY"
-                          className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium transition-all"
+                          className="w-full px-4 py-3 border-2 border-slate-950 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl focus:outline-none font-bold"
                           defaultValue="12/26"
                         />
                         <input
                           type="text"
                           placeholder="CVC"
-                          className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium transition-all"
+                          className="w-full px-4 py-3 border-2 border-slate-950 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl focus:outline-none font-bold"
                           defaultValue="123"
                         />
                       </div>
@@ -471,7 +493,7 @@ export default function Dashboard({
 
                     <button
                       onClick={processPayment}
-                      className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/20 active:scale-95"
+                      className="w-full bg-[#FF603D] border-[3px] border-slate-950 text-slate-950 font-black py-4 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer uppercase tracking-wider"
                     >
                       Pay ₹199
                     </button>
@@ -480,26 +502,26 @@ export default function Dashboard({
               )}
 
               {checkoutState === "processing" && (
-                <div className="p-12 flex flex-col items-center justify-center text-center min-h-[400px]">
-                  <Loader2 className="w-12 h-12 text-indigo-600 dark:text-indigo-400 animate-spin mb-6" />
-                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">
+                <div className="p-12 flex flex-col items-center justify-center text-center min-h-[350px]">
+                  <Loader2 className="w-12 h-12 text-slate-950 dark:text-white animate-spin mb-6 stroke-[3px]" />
+                  <h3 className="text-2xl font-black text-slate-950 dark:text-white mb-2 uppercase tracking-wide">
                     Processing...
                   </h3>
-                  <p className="text-slate-500 dark:text-slate-400 font-medium">
+                  <p className="text-slate-650 dark:text-slate-400 font-bold">
                     Please do not close this window.
                   </p>
                 </div>
               )}
 
               {checkoutState === "success" && (
-                <div className="p-12 flex flex-col items-center justify-center text-center min-h-[400px]">
-                  <div className="w-20 h-20 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mb-6">
-                    <CheckCircle2 className="w-10 h-10" />
+                <div className="p-12 flex flex-col items-center justify-center text-center min-h-[350px]">
+                  <div className="w-20 h-20 bg-[#A8E6CF] border-2 border-slate-950 text-slate-950 rounded-full flex items-center justify-center mb-6 shadow-[3px_3px_0px_0px_#000]">
+                    <CheckCircle2 className="w-10 h-10 stroke-[2.5px]" />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">
+                  <h3 className="text-2xl font-black text-slate-950 dark:text-white mb-2 uppercase tracking-wide">
                     Payment Successful!
                   </h3>
-                  <p className="text-slate-500 dark:text-slate-400 font-medium">
+                  <p className="text-slate-650 dark:text-slate-400 font-bold">
                     You now have access to the Exam Kit.
                   </p>
                 </div>
@@ -515,27 +537,29 @@ export default function Dashboard({
 function QuickLink({
   title,
   code,
+  color,
   onClick,
 }: {
   title: string;
   code: string;
+  color: string;
   onClick: () => void;
 }) {
   return (
     <button
       onClick={onClick}
-      className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow hover:border-slate-200 dark:hover:border-slate-700 text-left transition-all group flex items-start justify-between"
+      className={`${color} p-5 rounded-xl border-[3px] border-slate-950 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-slate-950 text-left transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group flex items-start justify-between cursor-pointer`}
     >
       <div>
-        <span className="text-xs font-bold text-slate-400 dark:text-slate-500 block mb-1">
+        <span className="text-[10px] font-black text-slate-950 uppercase tracking-widest bg-white/40 border border-slate-950 px-1.5 py-0.5 rounded block w-fit mb-2">
           {code}
         </span>
-        <span className="font-semibold text-slate-800 dark:text-slate-200 block group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+        <span className="font-extrabold text-slate-950 block leading-snug truncate max-w-[170px] uppercase italic">
           {title}
         </span>
       </div>
-      <div className="w-8 h-8 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center group-hover:bg-indigo-50 dark:group-hover:bg-indigo-500/10 transition-colors shrink-0">
-        <BookMarked className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
+      <div className="w-8 h-8 rounded-full bg-white/40 border-2 border-slate-950 flex items-center justify-center shrink-0">
+        <BookMarked className="w-4 h-4 text-slate-950 stroke-[2px]" />
       </div>
     </button>
   );

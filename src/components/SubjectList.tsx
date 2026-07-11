@@ -16,19 +16,27 @@ export default function SubjectList({
 }: SubjectListProps) {
   const subjectsToDisplay = subjects;
 
+  const cardColors = [
+    "bg-[#FFD54F]", // Yellow
+    "bg-[#C19BF5]", // Purple
+    "bg-[#88D3E6]", // Blue
+    "bg-[#FFD3B6]", // Peach
+  ];
+
   if (subjectsToDisplay.length === 0)
     return (
-      <div className="p-6 text-center text-slate-500">No subjects found</div>
+      <div className="p-6 text-center font-bold text-slate-700 dark:text-slate-400">No subjects found</div>
     );
 
   return (
-    <div className="p-4 md:p-0 pb-24 md:pb-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+    <div className="pb-24 md:pb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {subjectsToDisplay.map((subject, index) => {
           const totalModules = subject.modules.length;
           const progressPercentage =
             totalModules > 0 ? (subject.progress / totalModules) * 100 : 0;
-
+          
+          const cardColor = cardColors[index % cardColors.length];
 
           return (
             <motion.div
@@ -36,7 +44,7 @@ export default function SubjectList({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm text-left hover:shadow-md hover:border-slate-200 dark:hover:border-slate-700 transition-all group flex flex-col justify-between min-h-[200px]"
+              className={`${cardColor} border-[3px] border-slate-950 p-6 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex flex-col justify-between min-h-[220px] text-slate-950`}
             >
               <div
                 className="flex justify-between items-start mb-6 cursor-pointer"
@@ -49,10 +57,10 @@ export default function SubjectList({
                 }
               >
                 <div className="flex-1 pr-2">
-                  <span className="text-xs font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase mb-2 block">
+                  <span className="text-[10px] font-black tracking-widest text-slate-950 dark:text-slate-950 uppercase bg-white/40 border border-slate-950 px-2 py-0.5 rounded block w-fit mb-2">
                     {subject.code}
                   </span>
-                  <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mt-1 leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  <h3 className="text-xl font-black text-slate-950 dark:text-slate-950 leading-tight uppercase italic mt-1 group-hover:underline">
                     {subject.name}
                   </h3>
                 </div>
@@ -66,17 +74,13 @@ export default function SubjectList({
                       subtitle: subject.code,
                     });
                   }}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-                    bookmarks.some((b) => b.id === subject.id)
-                      ? "bg-indigo-100 dark:bg-indigo-500/20"
-                      : "bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-500/10"
-                  }`}
+                  className="w-10 h-10 rounded-full border-2 border-slate-950 bg-white flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_#000] active:translate-y-0.5 transition-transform cursor-pointer"
                 >
                   <BookmarkIcon
-                    className={`w-5 h-5 transition-colors ${
+                    className={`w-5 h-5 ${
                       bookmarks.some((b) => b.id === subject.id)
-                        ? "text-indigo-600 dark:text-indigo-400 fill-indigo-600 dark:fill-indigo-400"
-                        : "text-slate-400 dark:text-slate-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"
+                        ? "text-slate-950 fill-slate-950"
+                        : "text-slate-400 hover:text-slate-900"
                     }`}
                   />
                 </button>
@@ -84,7 +88,7 @@ export default function SubjectList({
 
               {/* Progress Section */}
               <div
-                className="mt-auto pt-4 border-t border-slate-50 dark:border-slate-800/50 cursor-pointer"
+                className="mt-auto pt-4 border-t-2 border-slate-950/20 cursor-pointer"
                 onClick={() =>
                   onNavigate({
                     view: "modules",
@@ -93,17 +97,17 @@ export default function SubjectList({
                   })
                 }
               >
-                <div className="flex justify-between items-end mb-3">
-                  <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">
+                <div className="flex justify-between items-end mb-2.5">
+                  <span className="text-xs font-black uppercase text-slate-800 dark:text-slate-800">
                     Course Progress
                   </span>
-                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-md">
+                  <span className="text-[10px] font-black text-slate-950 dark:text-slate-950 bg-white/40 border border-slate-950 px-2 py-0.5 rounded">
                     {subject.progress}/{totalModules} Modules
                   </span>
                 </div>
-                <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-3 w-full bg-white border-2 border-slate-950 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-indigo-500 dark:bg-indigo-500 rounded-full transition-all duration-500 ease-out"
+                    className="h-full bg-[#A8E6CF] border-r-2 border-slate-950"
                     style={{ width: `${progressPercentage}%` }}
                   />
                 </div>

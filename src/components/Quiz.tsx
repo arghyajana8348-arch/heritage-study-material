@@ -17,21 +17,20 @@ interface Question {
   correctAnswer: number;
 }
 
-// Sample questions, we can generate them dynamically or have fixed ones for the prototype
 const sampleQuestions: Question[] = [
   {
     id: 1,
     text: "Which of the following is a key concept in this module?",
-    options: ["Option A", "Option B", "Option C", "Option D"],
-    correctAnswer: 1, // 0-indexed, so 'Option B'
+    options: ["Oscillation and Waves", "General Relativity", "Fluid Dynamics", "Thermodynamic cycles"],
+    correctAnswer: 0,
   },
   {
     id: 2,
     text: "What is the primary application of the theories discussed?",
     options: [
-      "Data Analysis",
-      "Web Development",
-      "Machine Learning",
+      "Bridge Construction",
+      "Semiconductor Fabrication",
+      "Power Generation",
       "All of the above",
     ],
     correctAnswer: 3,
@@ -39,7 +38,7 @@ const sampleQuestions: Question[] = [
   {
     id: 3,
     text: "Which formula or method is mostly used to solve standard problems in this section?",
-    options: ["Method X", "Method Y", "Method Z", "None of the above"],
+    options: ["Linear Differential Equations", "Newton-Raphson Method", "Maxwell Relations", "Gauss Divergence Theorem"],
     correctAnswer: 0,
   },
 ];
@@ -100,21 +99,21 @@ export default function Quiz({
     const percentage = Math.round((score / sampleQuestions.length) * 100);
 
     return (
-      <div className="pb-24 md:pb-8 flex flex-col items-center justify-center min-h-[60vh]">
+      <div className="pb-24 md:pb-8 flex flex-col items-center justify-center min-h-[60vh] p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800 text-center max-w-md w-full"
+          className="bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white p-8 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] text-center max-w-md w-full"
         >
-          <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <span className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+          <div className="w-24 h-24 bg-[#FFD54F] border-[3px] border-slate-950 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0px_0px_#000] rotate-[-3deg]">
+            <span className="text-3xl font-black text-slate-955 italic">
               {percentage}%
             </span>
           </div>
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+          <h2 className="text-2xl font-black text-slate-950 dark:text-white mb-2 uppercase italic tracking-wide">
             Quiz Completed!
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 mb-8">
+          <p className="text-slate-655 dark:text-slate-400 mb-8 font-bold">
             You scored {score} out of {sampleQuestions.length} in {moduleName}.
           </p>
 
@@ -124,25 +123,25 @@ export default function Quiz({
               return (
                 <div
                   key={q.id}
-                  className="text-left bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl"
+                  className="text-left bg-slate-50 dark:bg-slate-800/50 p-4 border-2 border-slate-950 rounded-xl"
                 >
-                  <p className="font-medium text-slate-800 dark:text-slate-200 mb-2">
+                  <p className="font-extrabold text-slate-955 dark:text-slate-200 mb-2 leading-tight">
                     {q.text}
                   </p>
                   <div className="flex items-center gap-2">
                     {isCorrect ? (
-                      <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                     ) : (
-                      <XCircle className="w-5 h-5 text-red-500" />
+                      <XCircle className="w-5 h-5 text-red-650 shrink-0" />
                     )}
-                    <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                    <span className="text-sm font-bold text-slate-700 dark:text-slate-350">
                       Your answer: {q.options[selectedAnswers[q.id]]}
                     </span>
                   </div>
                   {!isCorrect && (
                     <div className="flex items-center gap-2 mt-1">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-500 opacity-0" />
-                      <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                      <div className="w-5 shrink-0" />
+                      <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
                         Correct answer: {q.options[q.correctAnswer]}
                       </span>
                     </div>
@@ -155,9 +154,9 @@ export default function Quiz({
           <div className="mt-8 flex gap-4">
             <button
               onClick={restartQuiz}
-              className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-3.5 px-4 bg-slate-100 dark:bg-slate-800 text-slate-950 dark:text-white border-[3px] border-slate-950 dark:border-white font-black uppercase text-sm rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              <RotateCcw className="w-5 h-5" />
+              <RotateCcw className="w-4 h-4 stroke-[2.5px]" />
               Retake
             </button>
             <button
@@ -169,7 +168,7 @@ export default function Quiz({
                   subjectName,
                 })
               }
-              className="flex-1 py-3 px-4 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors"
+              className="flex-1 py-3.5 px-4 bg-[#FFD54F] text-slate-950 border-[3px] border-slate-950 font-black uppercase text-sm rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center cursor-pointer"
             >
               Done
             </button>
@@ -180,7 +179,7 @@ export default function Quiz({
   }
 
   return (
-    <div className="pb-24 md:pb-8 max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto p-4">
       <div className="mb-8 flex items-center justify-between">
         <button
           onClick={() =>
@@ -191,12 +190,12 @@ export default function Quiz({
               subjectName,
             })
           }
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 bg-[#88D3E6] border-2 border-slate-950 text-slate-950 font-black rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 transition-all cursor-pointer"
         >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="font-medium">Back to Module</span>
+          <ArrowLeft className="w-4 h-4 stroke-[3px]" />
+          <span className="text-xs uppercase tracking-wide">Back</span>
         </button>
-        <div className="text-sm font-bold text-slate-400 dark:text-slate-500">
+        <div className="text-xs font-black uppercase tracking-wider text-slate-650 dark:text-slate-400 bg-white/40 border border-slate-950 px-2.5 py-1 rounded">
           Question {currentQuestionIndex + 1} of {sampleQuestions.length}
         </div>
       </div>
@@ -206,41 +205,41 @@ export default function Quiz({
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -20 }}
-        className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100 dark:border-slate-800"
+        className="bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-2xl p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]"
       >
         <div className="mb-6">
-          <span className="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider block mb-2">
-            {subjectName} - {moduleName}
+          <span className="text-xs font-black uppercase tracking-widest text-[#FF603D] bg-[#FF603D]/10 border border-[#FF603D] px-2 py-0.5 rounded block w-fit mb-2">
+            {subjectName}
           </span>
-          <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100 leading-snug">
+          <h2 className="text-xl md:text-2xl font-black text-slate-950 dark:text-white uppercase leading-snug">
             {currentQuestion.text}
           </h2>
         </div>
 
-        <div className="space-y-3 mb-8">
+        <div className="space-y-4 mb-8">
           {currentQuestion.options.map((option, index) => {
             const isSelected = selectedAnswers[currentQuestion.id] === index;
             return (
               <button
                 key={index}
                 onClick={() => handleOptionSelect(index)}
-                className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                className={`w-full text-left p-4 rounded-xl border-2 border-slate-950 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:scale-[1.01] active:translate-y-0.5 transition-all cursor-pointer ${
                   isSelected
-                    ? "border-indigo-600 dark:border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-900 dark:text-indigo-100"
-                    : "border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300"
+                    ? "bg-[#C19BF5] text-slate-950 font-black"
+                    : "bg-white dark:bg-slate-950 text-slate-950 dark:text-white font-bold"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{option}</span>
+                  <span>{option}</span>
                   <div
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    className={`w-5 h-5 rounded-full border-2 border-slate-950 flex items-center justify-center ${
                       isSelected
-                        ? "border-indigo-600 dark:border-indigo-400"
-                        : "border-slate-300 dark:border-slate-600"
+                        ? "bg-white"
+                        : "bg-transparent"
                     }`}
                   >
                     {isSelected && (
-                      <div className="w-2.5 h-2.5 rounded-full bg-indigo-600 dark:bg-indigo-400" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-slate-950" />
                     )}
                   </div>
                 </div>
@@ -249,14 +248,14 @@ export default function Quiz({
           })}
         </div>
 
-        <div className="flex justify-between items-center pt-6 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex justify-between items-center pt-6 border-t-2 border-slate-950/10 dark:border-slate-800/80">
           <button
             onClick={handlePrevious}
             disabled={currentQuestionIndex === 0}
-            className={`font-bold py-3 px-6 rounded-xl transition-colors ${
+            className={`font-black uppercase text-sm py-3 px-6 rounded-xl border-[3px] border-slate-950 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer ${
               currentQuestionIndex === 0
-                ? "text-slate-400 bg-slate-50 dark:bg-slate-800 cursor-not-allowed opacity-50"
-                : "text-slate-700 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                ? "text-slate-400 bg-slate-50 border-slate-300 dark:bg-slate-800 dark:border-slate-700 cursor-not-allowed opacity-50 shadow-none"
+                : "text-slate-950 bg-white dark:bg-slate-800 dark:text-white"
             }`}
           >
             Previous
@@ -264,10 +263,10 @@ export default function Quiz({
           <button
             onClick={handleNext}
             disabled={selectedAnswers[currentQuestion.id] === undefined}
-            className={`font-bold py-3 px-8 rounded-xl transition-colors ${
+            className={`font-black uppercase text-sm py-3 px-8 rounded-xl border-[3px] border-slate-950 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer ${
               selectedAnswers[currentQuestion.id] === undefined
-                ? "bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500 cursor-not-allowed"
-                : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-500/20"
+                ? "bg-slate-100 text-slate-400 border-slate-350 cursor-not-allowed shadow-none"
+                : "bg-[#FF603D] text-slate-955"
             }`}
           >
             {currentQuestionIndex === sampleQuestions.length - 1

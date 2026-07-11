@@ -105,59 +105,71 @@ export default function Login({ onLogin }: LoginProps) {
   };
 
   return (
-    <div className="h-full w-full flex flex-col md:flex-row bg-white dark:bg-slate-900 transition-colors duration-300">
+    <div className="h-full w-full flex flex-col md:flex-row bg-[#BACED6] dark:bg-[#12161A] transition-colors duration-300">
       {/* Decorative side for desktop */}
-      <div className="hidden md:flex md:w-1/2 lg:w-[55%] bg-indigo-700 items-center justify-center relative overflow-hidden">
-        {/* Abstract background shapes */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 opacity-40"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-900 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 opacity-60"></div>
-
-        {/* Optional subtle grid pattern overlay (can use CSS but sticking to Tailwind background utilities here if possible) */}
-        <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px]"></div>
-
-        <div className="relative z-10 p-12 lg:p-20 text-white max-w-2xl flex flex-col justify-center h-full">
-          <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mb-8 border border-white/20 shadow-2xl">
-            <BookOpen className="w-10 h-10 text-white" />
+      <div className="hidden md:flex md:w-[50%] lg:w-[55%] items-center justify-center p-8 lg:p-12 relative overflow-hidden bg-[#BACED6] dark:bg-[#12161A] border-r-[3px] border-slate-950 dark:border-white">
+        <div className="relative z-10 flex flex-col gap-6 w-full max-w-lg">
+          <div className="flex items-center gap-4 mb-2">
+            <div className="w-14 h-14 bg-[#FFD54F] border-[3px] border-slate-950 rounded-2xl flex items-center justify-center shadow-[4px_4px_0px_0px_#000] rotate-[-3deg] shrink-0">
+              <BookOpen className="w-7 h-7 text-slate-950 stroke-[3px]" />
+            </div>
+            <h1 className="text-3xl font-black text-slate-950 dark:text-white uppercase italic tracking-wide">
+              HERITAGE STUDY
+            </h1>
           </div>
-          <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-[1.1] tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white to-indigo-100">
-            Your gateway to <br />
-            academic excellence.
-          </h1>
-          <p className="text-xl text-indigo-100/90 leading-relaxed max-w-lg font-medium">
-            Access study materials, interactive quizzes, and comprehensive mind
-            maps structured specifically for Heritage Institute students.
-          </p>
+
+          <div className="space-y-6">
+            {/* Feature Card 1 */}
+            <div className="bg-[#FFD54F] border-[3px] border-slate-950 p-6 rounded-2xl shadow-[4px_4px_0px_0px_#000] text-slate-950 rotate-[-1.5deg]">
+              <h3 className="text-xl font-extrabold mb-1">📖 Structured Resource Library</h3>
+              <p className="font-semibold text-sm leading-relaxed opacity-95">
+                Syllabus-aligned comprehensive notes, PYQs, and suggestions curated by top students.
+              </p>
+            </div>
+
+            {/* Feature Card 2 */}
+            <div className="bg-[#C19BF5] border-[3px] border-slate-950 p-6 rounded-2xl shadow-[4px_4px_0px_0px_#000] text-slate-950 rotate-[1.5deg]">
+              <h3 className="text-xl font-extrabold mb-1">⚡ Interactive Quizzes</h3>
+              <p className="font-semibold text-sm leading-relaxed opacity-95">
+                Quick 10-question checkpoints for every module to test your understanding.
+              </p>
+            </div>
+
+            {/* Feature Card 3 */}
+            <div className="bg-[#FF603D] border-[3px] border-slate-950 p-6 rounded-2xl shadow-[4px_4px_0px_0px_#000] text-slate-950 rotate-[-1deg]">
+              <h3 className="text-xl font-extrabold mb-1">🗺️ Visual Concept Maps</h3>
+              <p className="font-semibold text-sm leading-relaxed opacity-95">
+                Interconnected mind maps and formula sheets to master relationships.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="h-full w-full md:w-1/2 lg:w-[45%] flex flex-col justify-center px-6 md:px-12 lg:px-24 bg-white dark:bg-slate-900 transition-colors duration-300">
+      {/* Form side */}
+      <div className="h-full w-full md:w-[50%] lg:w-[45%] flex flex-col justify-center px-6 py-12 md:py-0 md:px-12 lg:px-20 bg-[#BACED6] dark:bg-[#12161A] transition-colors duration-300">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-sm mx-auto"
+          className="w-full max-w-md mx-auto bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white p-6 md:p-8 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]"
         >
-          <div className="md:hidden w-16 h-16 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-indigo-100 dark:border-indigo-800">
-            <BookOpen className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+          <div className="md:hidden w-14 h-14 bg-[#FFD54F] border-[3px] border-slate-950 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0px_0px_#000]">
+            <BookOpen className="w-7 h-7 text-slate-950 stroke-[3px]" />
           </div>
 
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-3 text-center">
-            {isSignUp ? "Create Account" : "Welcome Back"}
+          <h1 className="text-3xl font-black text-slate-950 dark:text-white mb-2 text-center uppercase tracking-wide">
+            {isSignUp ? "CREATE ACCOUNT" : "WELCOME BACK"}
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed text-center font-medium text-sm">
+          <p className="text-slate-650 dark:text-slate-400 mb-8 leading-relaxed text-center font-bold text-sm">
             {isSignUp 
-              ? "Join the future of note-taking." 
-              : "Enter your credentials to access your AI workspace."}
+              ? "Join the ultimate note-taking platform." 
+              : "Access your AI-powered workspace."}
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {isSignUp && (
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
                 <input
                   type="text"
                   id="fullName"
@@ -167,17 +179,12 @@ export default function Login({ onLogin }: LoginProps) {
                     setError("");
                   }}
                   placeholder="Full Name"
-                  className="w-full pl-11 pr-5 py-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-600/10 dark:focus:ring-indigo-500/20 focus:border-indigo-600 dark:focus:border-indigo-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 font-medium"
+                  className="w-full px-4 py-3.5 border-[3px] border-slate-950 dark:border-white bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] focus:outline-none focus:translate-x-0.5 focus:translate-y-0.5 transition-all font-bold placeholder:text-slate-500"
                   required
                 />
               </div>
             )}
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
               <input
                 type="email"
                 id="email"
@@ -186,18 +193,13 @@ export default function Login({ onLogin }: LoginProps) {
                   setEmail(e.target.value);
                   setError("");
                 }}
-                placeholder="name@example.com"
-                className="w-full pl-11 pr-5 py-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-600/10 dark:focus:ring-indigo-500/20 focus:border-indigo-600 dark:focus:border-indigo-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 font-medium"
+                placeholder="college-email@heritageit.edu.in"
+                className="w-full px-4 py-3.5 border-[3px] border-slate-950 dark:border-white bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] focus:outline-none focus:translate-x-0.5 focus:translate-y-0.5 transition-all font-bold placeholder:text-slate-500"
                 required
               />
             </div>
             
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
               <input
                 type="password"
                 id="password"
@@ -206,65 +208,65 @@ export default function Login({ onLogin }: LoginProps) {
                   setPassword(e.target.value);
                   setError("");
                 }}
-                placeholder={isSignUp ? "Create a password" : "Enter your password"}
-                className="w-full pl-11 pr-5 py-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-600/10 dark:focus:ring-indigo-500/20 focus:border-indigo-600 dark:focus:border-indigo-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500 font-medium"
+                placeholder={isSignUp ? "Create Password" : "Password"}
+                className="w-full px-4 py-3.5 border-[3px] border-slate-950 dark:border-white bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] focus:outline-none focus:translate-x-0.5 focus:translate-y-0.5 transition-all font-bold placeholder:text-slate-500"
                 required
               />
             </div>
 
             {!isSignUp && (
-              <div className="flex items-center justify-between mt-2 mb-4">
+              <div className="flex items-center justify-between mt-3 mb-4">
                 <div className="flex items-center">
                   <input
                     id="remember-me"
                     type="checkbox"
-                    className="w-4 h-4 text-indigo-600 bg-white border-slate-300 rounded focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:ring-offset-slate-900 focus:ring-2 dark:bg-slate-800 dark:border-slate-700"
+                    className="w-4 h-4 text-slate-950 bg-white border-2 border-slate-950 rounded focus:ring-0 checked:bg-slate-950"
                   />
-                  <label htmlFor="remember-me" className="ml-2 text-xs font-medium text-slate-500 dark:text-slate-400">
+                  <label htmlFor="remember-me" className="ml-2 text-xs font-bold text-slate-650 dark:text-slate-400 select-none">
                     Remember me
                   </label>
                 </div>
-                <button type="button" className="text-xs font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                <button type="button" className="text-xs font-bold text-slate-950 dark:text-slate-300 hover:underline">
                   Forgot password?
                 </button>
               </div>
             )}
 
             {error && (
-              <p className="text-red-500 dark:text-red-400 text-sm mt-2 font-medium text-center">
-                {error}
+              <p className="text-red-650 dark:text-red-400 text-sm mt-2 font-bold text-center border-2 border-red-500 p-2.5 bg-red-50 dark:bg-red-950/20 rounded-xl">
+                ⚠️ {error}
               </p>
             )}
             {successMsg && (
-              <p className="text-emerald-500 dark:text-emerald-400 text-sm mt-2 font-medium text-center">
-                {successMsg}
+              <p className="text-emerald-700 dark:text-emerald-400 text-sm mt-2 font-bold text-center border-2 border-emerald-500 p-2.5 bg-emerald-50 dark:bg-emerald-950/20 rounded-xl">
+                ✅ {successMsg}
               </p>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className={`w-full bg-indigo-600 dark:bg-indigo-500 text-white font-semibold py-3.5 rounded-3xl hover:bg-indigo-700 dark:hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-600/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-4 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
+              className={`w-full bg-[#FFD54F] border-[3px] border-slate-950 text-slate-950 font-black py-4 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all flex items-center justify-center gap-2 mt-4 cursor-pointer`}
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
               ) : isSignUp ? (
-                "Create Account"
+                "CREATE ACCOUNT"
               ) : (
-                "Sign In"
+                "SIGN IN"
               )}
             </button>
             
             <div className="flex items-center my-6">
-              <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
-              <span className="flex-shrink-0 mx-4 text-xs font-bold text-slate-400 bg-white dark:bg-slate-900 px-2 rounded">OR</span>
-              <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+              <div className="flex-grow border-t-2 border-slate-950 dark:border-slate-800"></div>
+              <span className="flex-shrink-0 mx-4 text-xs font-black text-slate-400 bg-white dark:bg-slate-900 px-2 rounded">OR</span>
+              <div className="flex-grow border-t-2 border-slate-950 dark:border-slate-800"></div>
             </div>
 
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="w-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-semibold py-3.5 px-4 border border-slate-200 dark:border-slate-800 rounded-3xl hover:bg-slate-50 dark:hover:bg-slate-800 active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-sm"
+              className="w-full bg-white dark:bg-slate-900 text-slate-950 dark:text-white font-black py-4 px-4 border-[3px] border-slate-950 dark:border-white rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all flex items-center justify-center gap-3 cursor-pointer"
             >
               <svg viewBox="0 0 24 24" width="20" height="20">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -272,11 +274,11 @@ export default function Login({ onLogin }: LoginProps) {
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
               </svg>
-              Continue with Google
+              CONTINUE WITH GOOGLE
             </button>
             
             <div className="text-center mt-8">
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              <p className="text-sm font-bold text-slate-650 dark:text-slate-400">
                 {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
                 <button
                   type="button"
@@ -285,9 +287,9 @@ export default function Login({ onLogin }: LoginProps) {
                     setError("");
                     setSuccessMsg("");
                   }}
-                  className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline"
+                  className="text-slate-950 dark:text-white font-extrabold hover:underline"
                 >
-                  {isSignUp ? "Sign in" : "Sign up"}
+                  {isSignUp ? "SIGN IN" : "SIGN UP"}
                 </button>
               </p>
             </div>
