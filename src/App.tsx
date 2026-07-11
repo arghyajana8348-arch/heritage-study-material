@@ -12,8 +12,6 @@ import SprintContent from "./components/SprintContent";
 import AdminDashboard from "./components/AdminDashboard";
 import AboutUs from "./components/AboutUs";
 import Account from "./components/Account";
-import Classroom from "./components/Classroom";
-import ClassroomDetail from "./components/ClassroomDetail";
 import { AnimatePresence, motion } from "motion/react";
 import { supabase } from "./lib/supabase";
 
@@ -151,7 +149,6 @@ export default function App() {
     if (
       view.view === "dashboard" ||
       view.view === "subjects" ||
-      view.view === "classroom" ||
       view.view === "examSprint" ||
       view.view === "adminDashboard"
     ) {
@@ -247,6 +244,7 @@ export default function App() {
           <ExamSprint
             hasPaid={hasPaid || isAdmin}
             onNavigate={pushView}
+            isAdmin={isAdmin}
             onPay={() => {
               // Usually handled by Dashboard, but if they click from sidebar
               // and are not paid, they can trigger payment here
@@ -261,16 +259,7 @@ export default function App() {
             subjectName={currentView.subjectName}
           />
         );
-      case "classroom":
-        return <Classroom onNavigate={pushView} />;
-      case "classroomDetail":
-        return (
-          <ClassroomDetail
-            courseId={currentView.courseId}
-            courseName={currentView.courseName}
-            onBack={popView}
-          />
-        );
+
       case "adminDashboard":
         return <AdminDashboard />;
       case "about":
