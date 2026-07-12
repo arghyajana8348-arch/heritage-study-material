@@ -192,7 +192,21 @@ export default function Layout({
   const isLogin = currentView.view === "login";
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -463,7 +477,7 @@ export default function Layout({
               {headerTitle}
             </h1>
 
-            <GlobalSearch onNavigate={onNavigate} />            <div className="flex items-center gap-3 ml-auto relative">
+            <GlobalSearch onNavigate={onNavigate} />            <div ref={profileDropdownRef} className="flex items-center gap-3 ml-auto relative">
               {/* Theme Toggle */}
               <button
                 onClick={onToggleDarkMode}
