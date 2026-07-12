@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { ExternalLink, Github, Heart, Mail } from "lucide-react";
+import ContributorGuideModal from "./ContributorGuideModal";
 
 export default function AboutUs() {
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
+
   return (
     <div className="max-w-5xl mx-auto h-full overflow-y-auto pb-24 px-4">
       <div className="mb-12 text-center mt-6">
@@ -100,17 +103,17 @@ export default function AboutUs() {
             <p className="font-semibold text-slate-800 text-sm mb-5 max-w-md mx-auto leading-relaxed">
               We are looking for contributors! Check out our open issues or submit your own study materials.
             </p>
-            <a
-              href="http://github.com/arghyajana8348-arch/heritage-study/blob/main/CONTRIBUTING.md"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => setIsGuideOpen(true)}
               className="inline-flex items-center gap-2 px-5 py-3 bg-white border-2 border-slate-950 text-slate-950 rounded-xl font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer uppercase tracking-wider text-xs"
             >
               Contributor's Guide <ExternalLink className="w-4 h-4" />
-            </a>
+            </button>
           </div>
         </div>
       </div>
+
+      <ContributorGuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
     </div>
   );
 }
