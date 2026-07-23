@@ -17,7 +17,7 @@ import { supabase } from "./lib/supabase";
 
 export default function App() {
   const [viewStack, setViewStack] = useState<ViewState[]>([{ view: "login" }]);
-  const [user, setUser] = useState<{ email: string } | null>(null);
+  const [user, setUser] = useState<{ email: string; user_metadata?: any } | null>(null);
   const [darkMode, setDarkMode] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -27,6 +27,8 @@ export default function App() {
     const fetchData = async () => {
       const { data: sessionData } = await supabase.auth.getSession();
       if (!sessionData.session?.user) return;
+
+      setUser(sessionData.session.user);
 
       const user_id = sessionData.session.user.id;
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { User, Mail, Key, Shield, AlertCircle, CheckCircle2, LogOut } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { getUserDisplayName } from "../lib/utils";
 
 export default function Account({ onLogout }: { onLogout: () => void }) {
   const [user, setUser] = useState<any>(null);
@@ -74,7 +75,7 @@ export default function Account({ onLogout }: { onLogout: () => void }) {
     );
   }
 
-  const accountName = user?.user_metadata?.full_name || "User";
+  const accountName = getUserDisplayName(user);
   const userEmail = user?.email || "No email available";
 
   return (

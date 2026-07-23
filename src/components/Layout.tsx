@@ -23,6 +23,7 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { getUserDisplayName, getUserInitials } from "../lib/utils";
 import { motion, AnimatePresence } from "motion/react";
 import { subjects } from "../data";
 
@@ -230,12 +231,10 @@ export default function Layout({
     };
   }, []);
 
-  const accountName = user?.user_metadata?.full_name || "Student User";
+  const accountName = getUserDisplayName(user);
   const userEmail = user?.email || "student@heritageit.edu";
   const emailHandle = user?.email ? `@${user.email.split("@")[0]}` : "@student";
-  const userInitials = user?.user_metadata?.full_name
-    ? user.user_metadata.full_name.split(" ").map((n: string) => n[0]).join("").substring(0, 2)
-    : "AJ";
+  const userInitials = getUserInitials(user);
 
   const sidebarItems = [
     {

@@ -14,8 +14,10 @@ import {
   Bookmark as BookmarkIcon,
 } from "lucide-react";
 
+import { getUserDisplayName } from "../lib/utils";
+
 interface DashboardProps {
-  user: { email: string } | null;
+  user: { email: string; user_metadata?: any } | null;
   onNavigate: (view: ViewState) => void;
   hasPaid: boolean;
   setHasPaid: (val: boolean) => void;
@@ -46,14 +48,7 @@ export default function Dashboard({
     return "Good evening,";
   };
 
-  const displayName = user?.email
-    ? user.email
-        .split("@")[0]
-        .split(".")
-        .filter((part) => !part.match(/cse|it|ece|ee|me|ce|\d+/i)) // Filter out department codes and numbers
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(" ")
-    : "Engineering Student";
+  const displayName = getUserDisplayName(user);
 
   const handleCheckout = () => {
     if (hasPaid) {
