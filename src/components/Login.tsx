@@ -4,7 +4,7 @@ import { BookOpen } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 interface LoginProps {
-  onLogin: (email: string) => void;
+  onLogin: (userOrEmail: any) => void;
 }
 
 export default function Login({ onLogin }: LoginProps) {
@@ -34,21 +34,22 @@ export default function Login({ onLogin }: LoginProps) {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user?.email) {
-        onLogin(session.user.email);
+    supabase.auth.getSession().then((res) => {
+      const user = res?.data?.session?.user;
+      if (user) {
+        onLogin(user);
       }
     });
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user?.email) {
-        onLogin(session.user.email);
+    const subRes = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        onLogin(session.user);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subRes?.data?.subscription?.unsubscribe?.();
+    };
   }, [onLogin]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -81,8 +82,8 @@ export default function Login({ onLogin }: LoginProps) {
       if (error) {
         setError(error.message);
       } else {
-        if (data?.session?.user?.email) {
-           onLogin(data.session.user.email);
+        if (data?.session?.user) {
+           onLogin(data.session.user);
         } else {
            setSuccessMsg("Account created successfully! Please sign in.");
            setIsSignUp(false);
@@ -96,8 +97,8 @@ export default function Login({ onLogin }: LoginProps) {
 
       if (error) {
         setError(error.message);
-      } else if (data?.session?.user?.email) {
-        onLogin(data.session.user.email);
+      } else if (data?.session?.user) {
+        onLogin(data.session.user);
       }
     }
 

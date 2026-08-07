@@ -17,63 +17,108 @@ import { supabase } from "./lib/supabase";
 
 export default function App() {
   const [viewStack, setViewStack] = useState<ViewState[]>([{ view: "login" }]);
-  const [user, setUser] = useState<{ email: string; user_metadata?: any } | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [darkMode, setDarkMode] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [completedItems, setCompletedItems] = useState<string[]>([]);
 
+  // Session check and auth listener on mount
+  useEffect(() => {
+    let isMounted = true;
+
+    supabase.auth.getSession().then((res) => {
+      if (!isMounted) return;
+      const sessionUser = res?.data?.session?.user;
+      if (sessionUser) {
+        setUser(sessionUser);
+        const email = sessionUser.email || "";
+        if (email.toLowerCase() === "arghya.jana.cse29@heritageit.edu.in") {
+          setViewStack([{ view: "adminDashboard" }]);
+        } else {
+          setViewStack([{ view: "dashboard" }]);
+        }
+      }
+    });
+
+    const subRes = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!isMounted) return;
+      if (session?.user) {
+        setUser(session.user);
+        const email = session.user.email || "";
+        if (email.toLowerCase() === "arghya.jana.cse29@heritageit.edu.in") {
+          setViewStack([{ view: "adminDashboard" }]);
+        } else {
+          setViewStack((prev) =>
+            prev.length === 1 && prev[0].view === "login"
+              ? [{ view: "dashboard" }]
+              : prev
+          );
+        }
+      } else {
+        setUser(null);
+        setViewStack([{ view: "login" }]);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subRes?.data?.subscription?.unsubscribe?.();
+    };
+  }, []);
+
+  // Fetch bookmarks & completed items when user changes
   useEffect(() => {
     const fetchData = async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (!sessionData.session?.user) return;
-
-      setUser(sessionData.session.user);
-
-      const user_id = sessionData.session.user.id;
-
-      // Fetch Bookmarks
-      const { data: bookmarksData } = await supabase
-        .from("bookmarks")
-        .select("*")
-        .eq("user_id", user_id);
-
-      if (bookmarksData) {
-        setBookmarks(
-          bookmarksData.map((b: any) => ({
-            id: b.item_id,
-            type: b.type,
-            title: b.title,
-            subtitle: b.subtitle,
-            subjectId: b.subject_id,
-            subjectName: b.subject_name,
-          }))
-        );
+      if (!user) {
+        setBookmarks([]);
+        setCompletedItems([]);
+        return;
       }
 
-      // Fetch Completed Items
-      const { data: completedData } = await supabase
-        .from("completed_items")
-        .select("*")
-        .eq("user_id", user_id);
+      const user_id = user.id || user.email;
+      if (!user_id) return;
 
-      if (completedData) {
-        setCompletedItems(completedData.map((c: any) => c.item_id));
+      try {
+        // Fetch Bookmarks
+        const { data: bookmarksData } = await supabase
+          .from("bookmarks")
+          .select("*")
+          .eq("user_id", user_id);
+
+        if (bookmarksData && Array.isArray(bookmarksData)) {
+          setBookmarks(
+            bookmarksData.map((b: any) => ({
+              id: b.item_id,
+              type: b.type,
+              title: b.title,
+              subtitle: b.subtitle,
+              subjectId: b.subject_id,
+              subjectName: b.subject_name,
+            }))
+          );
+        }
+
+        // Fetch Completed Items
+        const { data: completedData } = await supabase
+          .from("completed_items")
+          .select("*")
+          .eq("user_id", user_id);
+
+        if (completedData && Array.isArray(completedData)) {
+          setCompletedItems(completedData.map((c: any) => c.item_id));
+        }
+      } catch (err) {
+        console.warn("Failed to fetch user data:", err);
       }
     };
 
-    if (user) {
-      fetchData();
-    } else {
-      setBookmarks([]);
-      setCompletedItems([]);
-    }
+    fetchData();
   }, [user]);
 
   const toggleBookmark = async (bookmark: Bookmark) => {
     const exists = bookmarks.find((b) => b.id === bookmark.id);
-    const { data: sessionData } = await supabase.auth.getSession();
-    const user_id = sessionData.session?.user?.id;
+    const user_id = user?.id || user?.email;
     if (!user_id) return;
 
     if (exists) {
@@ -99,8 +144,7 @@ export default function App() {
 
   const toggleCompletedItem = async (itemId: string) => {
     const isCompleted = completedItems.includes(itemId);
-    const { data: sessionData } = await supabase.auth.getSession();
-    const user_id = sessionData.session?.user?.id;
+    const user_id = user?.id || user?.email;
     if (!user_id) return;
 
     if (isCompleted) {
@@ -131,12 +175,23 @@ export default function App() {
 
   const currentView = viewStack[viewStack.length - 1];
 
-  const handleLogin = (email: string) => {
-    setUser({ email });
-    if (email.toLowerCase() === "arghya.jana.cse29@heritageit.edu.in") {
-      setViewStack([{ view: "adminDashboard" }]);
-    } else {
-      setViewStack([{ view: "dashboard" }]);
+  const handleLogin = (userOrEmail: any) => {
+    if (typeof userOrEmail === "string") {
+      const u = { email: userOrEmail };
+      setUser(u);
+      if (userOrEmail.toLowerCase() === "arghya.jana.cse29@heritageit.edu.in") {
+        setViewStack([{ view: "adminDashboard" }]);
+      } else {
+        setViewStack([{ view: "dashboard" }]);
+      }
+    } else if (userOrEmail && typeof userOrEmail === "object") {
+      setUser(userOrEmail);
+      const email = userOrEmail.email || "";
+      if (email.toLowerCase() === "arghya.jana.cse29@heritageit.edu.in") {
+        setViewStack([{ view: "adminDashboard" }]);
+      } else {
+        setViewStack([{ view: "dashboard" }]);
+      }
     }
   };
 
@@ -186,7 +241,7 @@ export default function App() {
   };
 
   const isAdmin =
-    user?.email.toLowerCase() === "arghya.jana.cse29@heritageit.edu.in";
+    user?.email?.toLowerCase() === "arghya.jana.cse29@heritageit.edu.in";
 
   const renderView = () => {
     switch (currentView.view) {
