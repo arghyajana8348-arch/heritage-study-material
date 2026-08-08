@@ -48,7 +48,7 @@ function GlobalSearch({
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: MouseEvent | TouchEvent) {
       if (
         searchRef.current &&
         !searchRef.current.contains(event.target as Node)
@@ -57,11 +57,39 @@ function GlobalSearch({
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, []);
 
   const getResults = () => {
-    if (!query.trim()) return [];
+    if (!query.trim()) {
+      // Return popular recommendations when query is empty
+      const defaultRecs: any[] = [];
+      subjects.slice(0, 4).forEach((subject) => {
+        defaultRecs.push({ type: "subject", subject, isRecommended: true });
+      });
+      if (subjects[0]?.modules[0]) {
+        defaultRecs.push({
+          type: "module",
+          subject: subjects[0],
+          module: subjects[0].modules[0],
+          isRecommended: true,
+        });
+      }
+      if (subjects[2]?.modules[1]) {
+        defaultRecs.push({
+          type: "module",
+          subject: subjects[2],
+          module: subjects[2].modules[1],
+          isRecommended: true,
+        });
+      }
+      return defaultRecs;
+    }
+
     const lowerQuery = query.toLowerCase();
     const results: any[] = [];
 
@@ -73,28 +101,45 @@ function GlobalSearch({
         results.push({ type: "subject", subject });
       }
       subject.modules.forEach((module) => {
-        if (module.name.toLowerCase().includes(lowerQuery)) {
+        if (
+          module.name.toLowerCase().includes(lowerQuery) ||
+          module.id.toLowerCase().includes(lowerQuery)
+        ) {
           results.push({ type: "module", subject, module });
         }
       });
     });
 
-    return results.slice(0, 5); // Limit to 5 results
+    return results.slice(0, 8); // Allow up to 8 search results
   };
 
   const results = getResults();
+  const isQueryEmpty = !query.trim();
 
   return (
     <div
-      className="relative z-50 flex-1 max-w-md ml-4 mr-4 md:mr-8"
+      className="relative z-50 flex-1 min-w-0 max-w-md ml-2 mr-2 md:ml-4 md:mr-8"
       ref={searchRef}
     >
-      <div className="relative flex items-center w-full h-11 bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] rounded-xl transition-all">
-        <Search className="w-5 h-5 ml-3 text-slate-900 dark:text-white shrink-0" />
+      {/* Mobile Backdrop overlay when search dropdown is open */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs z-40 md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
+      <div className="relative flex items-center w-full h-11 bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] rounded-xl transition-all z-50">
+        <Search className="w-4 h-4 sm:w-5 sm:h-5 ml-2.5 sm:ml-3 text-slate-900 dark:text-white shrink-0" />
         <input
           type="text"
           placeholder="Search subjects, modules..."
-          className="w-full bg-transparent border-none focus:outline-none focus:ring-0 text-sm px-3 text-slate-900 dark:text-white placeholder:text-slate-500 font-semibold"
+          className="w-full bg-transparent border-none focus:outline-none focus:ring-0 text-xs sm:text-sm px-2 sm:px-3 text-slate-900 dark:text-white placeholder:text-slate-500 font-semibold"
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -105,21 +150,32 @@ function GlobalSearch({
         {query && (
           <button
             onClick={() => setQuery("")}
-            className="mr-3 text-slate-900 dark:text-white hover:scale-110 transition-transform"
+            className="mr-2 sm:mr-3 text-slate-900 dark:text-white hover:scale-110 transition-transform p-1"
+            aria-label="Clear search"
           >
-            <X className="w-4 h-4 stroke-[3px]" />
+            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3px]" />
           </button>
         )}
       </div>
 
       <AnimatePresence>
-        {isOpen && query.trim() && (
+        {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute top-full left-0 right-0 mt-3 bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] dark:shadow-[5px_5px_0px_0px_rgba(255,255,255,1)] overflow-hidden"
+            className="fixed left-3 right-3 top-[68px] md:absolute md:top-full md:left-0 md:right-0 md:mt-3 bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] dark:shadow-[5px_5px_0px_0px_rgba(255,255,255,1)] overflow-hidden z-[100] max-h-[70vh] overflow-y-auto"
           >
+            {isQueryEmpty && (
+              <div className="px-4 pt-3 pb-2 flex items-center justify-between border-b-2 border-slate-200 dark:border-slate-800 bg-slate-100/80 dark:bg-slate-800/50">
+                <span className="text-xs font-black uppercase italic tracking-wider text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                  <Zap className="w-3.5 h-3.5 text-[#FF603D]" />
+                  Recommended & Popular
+                </span>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase">Quick Access</span>
+              </div>
+            )}
+
             {results.length > 0 ? (
               <div className="py-1">
                 {results.map((result, i) => (
@@ -143,9 +199,9 @@ function GlobalSearch({
                         });
                       }
                     }}
-                    className="w-full px-4 py-3 text-left hover:bg-slate-100 dark:hover:bg-slate-800/80 flex items-start gap-3 transition-colors border-b-2 border-slate-150 dark:border-slate-800 last:border-b-0"
+                    className="w-full px-4 py-3 text-left hover:bg-slate-100 dark:hover:bg-slate-800/80 flex items-center gap-3 transition-colors border-b-2 border-slate-150 dark:border-slate-800 last:border-b-0 cursor-pointer active:bg-slate-200 dark:active:bg-slate-700"
                   >
-                    <div className="mt-0.5 shrink-0 w-8 h-8 rounded-lg bg-[#C19BF5] border-2 border-slate-950 flex items-center justify-center shadow-[1px_1px_0px_0px_#000]">
+                    <div className="shrink-0 w-8 h-8 rounded-lg bg-[#C19BF5] border-2 border-slate-950 flex items-center justify-center shadow-[1px_1px_0px_0px_#000]">
                       {result.type === "subject" ? (
                         <Layers className="w-4 h-4 text-slate-950" />
                       ) : (
@@ -153,23 +209,30 @@ function GlobalSearch({
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-sm text-slate-900 dark:text-white truncate">
-                        {result.type === "subject"
-                          ? result.subject.name
-                          : result.module.name}
-                      </h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-bold text-sm text-slate-900 dark:text-white truncate">
+                          {result.type === "subject"
+                            ? result.subject.name
+                            : result.module.name}
+                        </h4>
+                        {result.isRecommended && (
+                          <span className="shrink-0 text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-[#FFD54F] text-slate-950 border border-slate-950">
+                            Popular
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 truncate">
                         {result.type === "subject"
-                          ? ""
+                          ? `${result.subject.code} • ${result.subject.modules?.length || 4} Modules`
                           : `${result.subject.name} • Module ${result.module.number}`}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-slate-900 dark:text-white mt-2 shrink-0 stroke-[3px]" />
+                    <ChevronRight className="w-4 h-4 text-slate-900 dark:text-white shrink-0 stroke-[3px]" />
                   </button>
                 ))}
               </div>
             ) : (
-              <div className="p-4 text-center font-bold text-sm text-slate-650 dark:text-slate-400">
+              <div className="p-5 text-center font-bold text-sm text-slate-650 dark:text-slate-400">
                 No results found for "{query}"
               </div>
             )}
