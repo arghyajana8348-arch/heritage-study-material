@@ -166,9 +166,18 @@ export default function Quiz({
         }),
       });
 
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const rawText = await res.text();
+        console.error("Non-JSON API response received:", rawText);
+        throw new Error(
+          "Server returned a non-JSON response. Please ensure GEMINI_API_KEY is configured in Settings > Secrets."
+        );
+      }
+
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Failed to fetch explanation.");
+        throw new Error(data.error || "Failed to fetch AI explanation.");
       }
 
       setExplanations((prev) => ({

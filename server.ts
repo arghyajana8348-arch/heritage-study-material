@@ -73,12 +73,10 @@ Please provide a concise, friendly, and tailored explanation (maximum 3-4 senten
 Keep the tone encouraging, clear, and direct for a university student.
 `;
 
-      // Candidate models list for multi-region compatibility & fallbacks
+      // Candidate models list using valid Google GenAI SDK models
       const candidateModels = [
-        "gemini-2.5-flash",
-        "gemini-2.0-flash",
-        "gemini-1.5-flash",
         "gemini-3.6-flash",
+        "gemini-flash-latest",
       ];
 
       let explanation: string | null = null;
@@ -130,6 +128,11 @@ Keep the tone encouraging, clear, and direct for a university student.
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
+  });
+
+  // Catch-all for API endpoints to ensure JSON response instead of HTML index fallback
+  app.all("/api/*", (req, res) => {
+    res.status(404).json({ error: `API route ${req.method} ${req.originalUrl} not found.` });
   });
 
   // Vite middleware for development vs static serve for production
