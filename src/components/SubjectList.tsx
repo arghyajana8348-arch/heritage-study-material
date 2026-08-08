@@ -75,8 +75,10 @@ export default function SubjectList({
               key={subject.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className={`${cardColor} border-[3px] border-slate-950 p-6 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all flex flex-col justify-between min-h-[220px] text-slate-950`}
+              whileHover={{ scale: 1.025, y: -4 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ delay: index * 0.05, duration: 0.2 }}
+              className={`${cardColor} border-[3px] border-slate-950 p-6 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:hover:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] transition-shadow duration-200 flex flex-col justify-between min-h-[220px] text-slate-950 group cursor-pointer`}
             >
               <div
                 className="flex justify-between items-start mb-6 cursor-pointer"
