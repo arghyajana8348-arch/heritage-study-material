@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -9,20 +12,14 @@ async function startServer() {
 
   app.use(express.json());
 
-  // Initialize Gemini AI Client
-  const getGeminiAI = () => {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+  // Helper to retrieve and clean the Gemini API Key
+  const getGeminiApiKey = () => {
+    let rawKey = process.env.GEMINI_API_KEY || "";
+    rawKey = rawKey.trim().replace(/^["']|["']$/g, "");
+    if (!rawKey || rawKey === "MY_GEMINI_API_KEY" || rawKey === "your_gemini_api_key") {
       return null;
     }
-    return new GoogleGenAI({
-      apiKey,
-      httpOptions: {
-        headers: {
-          "User-Agent": "aistudio-build",
-        },
-      },
-    });
+    return rawKey;
   };
 
   // API route for generating AI quiz feedback for wrong answers
@@ -37,19 +34,28 @@ async function startServer() {
         moduleName,
       } = req.body;
 
-      if (!questionText || !selectedAnswer || !correctAnswer) {
+      if (!questionText || selectedAnswer === undefined || correctAnswer === undefined) {
         return res.status(400).json({
           error: "Missing required fields for explanation generation.",
         });
       }
 
-      const ai = getGeminiAI();
-      if (!ai) {
+      const apiKey = getGeminiApiKey();
+      if (!apiKey) {
         return res.status(500).json({
           error:
-            "GEMINI_API_KEY environment variable is missing. Please configure it in Settings > Secrets.",
+            "GEMINI_API_KEY environment variable is missing or invalid. Please configure it in Settings > Secrets.",
         });
       }
+
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            "User-Agent": "aistudio-build",
+          },
+        },
+      });
 
       const prompt = `
 Subject: ${subjectName || "General"}
@@ -67,24 +73,56 @@ Please provide a concise, friendly, and tailored explanation (maximum 3-4 senten
 Keep the tone encouraging, clear, and direct for a university student.
 `;
 
-      const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
-        contents: prompt,
-        config: {
-          systemInstruction:
-            "You are an encouraging and expert professor helping engineering/college students understand quiz concepts.",
-          temperature: 0.7,
-        },
-      });
+      // Candidate models list for multi-region compatibility & fallbacks
+      const candidateModels = [
+        "gemini-2.5-flash",
+        "gemini-2.0-flash",
+        "gemini-1.5-flash",
+        "gemini-3.6-flash",
+      ];
 
-      const explanation = response.text || "No explanation could be generated.";
-      return res.json({ explanation });
+      let explanation: string | null = null;
+      let lastError: any = null;
+
+      for (const modelName of candidateModels) {
+        try {
+          const response = await ai.models.generateContent({
+            model: modelName,
+            contents: prompt,
+            config: {
+              systemInstruction:
+                "You are an encouraging and expert professor helping engineering/college students understand quiz concepts.",
+              temperature: 0.7,
+            },
+          });
+
+          if (response && response.text) {
+            explanation = response.text;
+            break; // Success! Exit model loop
+          }
+        } catch (err: any) {
+          console.warn(`Gemini generation with ${modelName} failed:`, err?.message || err);
+          lastError = err;
+        }
+      }
+
+      if (explanation) {
+        return res.json({ explanation });
+      }
+
+      throw lastError || new Error("Failed to generate content with available Gemini models.");
     } catch (error: any) {
       console.error("Error generating Gemini quiz explanation:", error);
+      const errMsg = error?.message || String(error);
+
+      if (errMsg.toLowerCase().includes("api_key") || errMsg.toLowerCase().includes("unauthorized") || errMsg.toLowerCase().includes("invalid")) {
+        return res.status(401).json({
+          error: "Invalid Gemini API key. Please verify your API key in Settings > Secrets.",
+        });
+      }
+
       return res.status(500).json({
-        error:
-          error?.message ||
-          "Failed to generate explanation. Please try again later.",
+        error: "Failed to generate explanation. Please try again later.",
       });
     }
   });
