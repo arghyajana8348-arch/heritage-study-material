@@ -415,7 +415,7 @@ export default function Layout({
           )}
           <aside className={`fixed md:sticky top-0 left-0 h-screen z-50 md:z-30 border-r-[3px] border-slate-950 dark:border-white bg-slate-900 dark:bg-slate-955 flex flex-col justify-between py-6 transition-all duration-300 shrink-0 ${
             isSidebarExpanded 
-              ? "w-72 translate-x-0" 
+              ? "w-72 sm:w-80 translate-x-0" 
               : "w-20 -translate-x-full md:translate-x-0 md:items-center"
           }`}>
             {/* Logo */}
@@ -426,12 +426,12 @@ export default function Layout({
               }`}
               title="Heritage Study"
             >
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-11 h-11 bg-[#FFD54F] border-[3px] border-slate-955 rounded-xl flex items-center justify-center shadow-[3px_3px_0px_0px_#000] rotate-[-2deg] shrink-0">
                   <BookOpen className="w-5 h-5 text-slate-955 stroke-[3px]" />
                 </div>
                 {isSidebarExpanded && (
-                  <span className="font-black text-xl tracking-tight text-white uppercase italic truncate">
+                  <span className="font-black text-xl tracking-tight text-white uppercase italic truncate pe-2.5 min-w-0">
                     Heritage Study
                   </span>
                 )}
@@ -464,7 +464,7 @@ export default function Layout({
                   }}
                   className={`w-full flex items-center border-[3px] border-slate-950 dark:border-white transition-all cursor-pointer rounded-xl ${
                     isSidebarExpanded 
-                      ? "justify-start px-4 py-3 gap-3.5" 
+                      ? "justify-start px-3.5 py-3 gap-3.5" 
                       : "justify-center p-2.5"
                   } ${
                     item.active 
@@ -475,7 +475,7 @@ export default function Layout({
                 >
                   <div className="shrink-0">{item.icon}</div>
                   {isSidebarExpanded && (
-                    <span className="font-black text-sm uppercase italic tracking-wide truncate">
+                    <span className="font-black text-sm uppercase italic tracking-wide truncate pe-2.5 min-w-0 text-left">
                       {item.label}
                     </span>
                   )}
@@ -490,14 +490,14 @@ export default function Layout({
                   onClick={onLogout}
                   className={`w-full flex items-center border-[3px] border-slate-950 bg-red-100 text-red-600 shadow-[3px_3px_0px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer rounded-xl ${
                     isSidebarExpanded 
-                      ? "justify-start px-4 py-3 gap-3.5" 
+                      ? "justify-start px-3.5 py-3 gap-3.5" 
                       : "justify-center p-2.5"
                   }`}
                   title="Sign Out"
                 >
                   <LogOut className="w-5 h-5 stroke-[2.5px] shrink-0" />
                   {isSidebarExpanded && (
-                    <span className="font-black text-sm uppercase italic tracking-wide truncate">
+                    <span className="font-black text-sm uppercase italic tracking-wide truncate pe-2.5 min-w-0 text-left">
                       Sign Out
                     </span>
                   )}
