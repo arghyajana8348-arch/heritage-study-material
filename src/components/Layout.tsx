@@ -407,15 +407,21 @@ export default function Layout({
     <div className="min-h-screen bg-[#BACED6] dark:bg-[#12161A] font-sans text-slate-950 dark:text-white transition-colors duration-300 flex overflow-hidden">
       {!isLogin && (
         <>
-          {isSidebarExpanded && (
-            <div 
-              onClick={() => setIsSidebarExpanded(false)}
-              className="md:hidden fixed inset-0 bg-slate-955/40 backdrop-blur-sm z-40 transition-opacity"
-            />
-          )}
-          <aside className={`fixed md:sticky top-0 left-0 h-screen z-50 md:z-30 border-r-[3px] border-slate-950 dark:border-white bg-slate-900 dark:bg-slate-955 flex flex-col justify-between py-6 transition-all duration-300 shrink-0 ${
+          <AnimatePresence>
+            {isSidebarExpanded && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.45, ease: "easeInOut" }}
+                onClick={() => setIsSidebarExpanded(false)}
+                className="md:hidden fixed inset-0 bg-slate-955/40 backdrop-blur-sm z-40 cursor-pointer"
+              />
+            )}
+          </AnimatePresence>
+          <aside className={`fixed md:sticky top-0 left-0 h-screen z-50 md:z-30 border-r-[3px] border-slate-950 dark:border-white bg-slate-900 dark:bg-slate-955 flex flex-col justify-between py-6 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shrink-0 overflow-x-hidden ${
             isSidebarExpanded 
-              ? "w-72 sm:w-80 translate-x-0" 
+              ? "w-72 sm:w-80 translate-x-0 shadow-[8px_0px_24px_-4px_rgba(0,0,0,0.3)] md:shadow-none" 
               : "w-20 -translate-x-full md:translate-x-0 md:items-center"
           }`}>
             {/* Logo */}
@@ -427,42 +433,59 @@ export default function Layout({
               title="Heritage Study"
             >
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-11 h-11 bg-[#FFD54F] border-[3px] border-slate-955 rounded-xl flex items-center justify-center shadow-[3px_3px_0px_0px_#000] rotate-[-2deg] shrink-0">
+                <div className="w-11 h-11 bg-[#FFD54F] border-[3px] border-slate-955 rounded-xl flex items-center justify-center shadow-[3px_3px_0px_0px_#000] rotate-[-2deg] shrink-0 transition-transform duration-300 hover:rotate-0">
                   <BookOpen className="w-5 h-5 text-slate-955 stroke-[3px]" />
                 </div>
-                {isSidebarExpanded && (
-                  <span className="font-black text-xl tracking-tight text-white uppercase italic truncate pe-2.5 min-w-0">
-                    Heritage Study
-                  </span>
-                )}
+                <AnimatePresence mode="wait">
+                  {isSidebarExpanded && (
+                    <motion.span 
+                      initial={{ opacity: 0, x: -14 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -14 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      className="font-black text-xl tracking-tight text-white uppercase italic truncate pe-2.5 min-w-0"
+                    >
+                      Heritage Study
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Mobile Close Button */}
-              {isSidebarExpanded && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsSidebarExpanded(false);
-                  }}
-                  className="md:hidden p-1.5 rounded-lg bg-white text-slate-955 border-2 border-slate-950 shadow-[1.5px_1.5px_0px_0px_#000] shrink-0 active:translate-y-0.5 transition-transform"
-                >
-                  <X className="w-4 h-4 stroke-[2.5px]" />
-                </button>
-              )}
+              <AnimatePresence>
+                {isSidebarExpanded && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.3 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsSidebarExpanded(false);
+                    }}
+                    className="md:hidden p-1.5 rounded-lg bg-white text-slate-955 border-2 border-slate-950 shadow-[1.5px_1.5px_0px_0px_#000] shrink-0 active:translate-y-0.5 transition-transform cursor-pointer"
+                  >
+                    <X className="w-4 h-4 stroke-[2.5px]" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Navigation Icons/Buttons */}
-            <nav className="flex-1 flex flex-col gap-3 w-full px-3 pt-10">
+            <nav className="flex-1 flex flex-col gap-3 w-full px-3 pt-10 overflow-x-hidden">
               {sidebarItems.map((item) => (
-                <button
+                <motion.button
                   key={item.id}
+                  whileHover={{ scale: 1.02, x: isSidebarExpanded ? 2 : 0 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => {
                     item.onClick();
                     if (window.innerWidth < 768) {
                       setIsSidebarExpanded(false);
                     }
                   }}
-                  className={`w-full flex items-center border-[3px] border-slate-950 dark:border-white transition-all cursor-pointer rounded-xl ${
+                  className={`w-full flex items-center border-[3px] border-slate-950 dark:border-white transition-all duration-300 cursor-pointer rounded-xl ${
                     isSidebarExpanded 
                       ? "justify-start px-3.5 py-3 gap-3.5" 
                       : "justify-center p-2.5"
@@ -474,21 +497,31 @@ export default function Layout({
                   title={item.label}
                 >
                   <div className="shrink-0">{item.icon}</div>
-                  {isSidebarExpanded && (
-                    <span className="font-black text-sm uppercase italic tracking-wide truncate pe-2.5 min-w-0 text-left">
-                      {item.label}
-                    </span>
-                  )}
-                </button>
+                  <AnimatePresence mode="wait">
+                    {isSidebarExpanded && (
+                      <motion.span 
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -12 }}
+                        transition={{ duration: 0.32, ease: "easeOut" }}
+                        className="font-black text-sm uppercase italic tracking-wide truncate pe-2.5 min-w-0 text-left"
+                      >
+                        {item.label}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
               ))}
             </nav>
 
             {/* Logout at bottom */}
             {onLogout && (
               <div className="w-full px-3">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.02, x: isSidebarExpanded ? 2 : 0 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={onLogout}
-                  className={`w-full flex items-center border-[3px] border-slate-950 bg-red-100 text-red-600 shadow-[3px_3px_0px_0px_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all cursor-pointer rounded-xl ${
+                  className={`w-full flex items-center border-[3px] border-slate-950 bg-red-100 text-red-600 shadow-[3px_3px_0px_0px_#000] transition-all duration-300 cursor-pointer rounded-xl ${
                     isSidebarExpanded 
                       ? "justify-start px-3.5 py-3 gap-3.5" 
                       : "justify-center p-2.5"
@@ -496,12 +529,20 @@ export default function Layout({
                   title="Sign Out"
                 >
                   <LogOut className="w-5 h-5 stroke-[2.5px] shrink-0" />
-                  {isSidebarExpanded && (
-                    <span className="font-black text-sm uppercase italic tracking-wide truncate pe-2.5 min-w-0 text-left">
-                      Sign Out
-                    </span>
-                  )}
-                </button>
+                  <AnimatePresence mode="wait">
+                    {isSidebarExpanded && (
+                      <motion.span 
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -12 }}
+                        transition={{ duration: 0.32, ease: "easeOut" }}
+                        className="font-black text-sm uppercase italic tracking-wide truncate pe-2.5 min-w-0 text-left"
+                      >
+                        Sign Out
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
               </div>
             )}
           </aside>
@@ -510,17 +551,24 @@ export default function Layout({
 
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
         {!isLogin && (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
             onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
-            className={`absolute z-45 bg-[#FFD54F] border-[3px] border-slate-955 text-slate-955 p-2 rounded-xl shadow-[3px_3px_0px_0px_#000] hover:bg-[#ebc238] transition-all cursor-pointer flex items-center justify-center top-3.5 sm:top-4 md:top-5 lg:top-6.5 left-3 sm:left-4`}
+            className="absolute z-45 bg-[#FFD54F] border-[3px] border-slate-955 text-slate-955 p-2 rounded-xl shadow-[3px_3px_0px_0px_#000] hover:bg-[#ebc238] transition-colors duration-200 cursor-pointer flex items-center justify-center top-3.5 sm:top-4 md:top-5 lg:top-6.5 left-3 sm:left-4"
             title={isSidebarExpanded ? "Collapse Menu" : "Expand Menu"}
           >
-            {isSidebarExpanded ? (
-              <ChevronLeft className="w-4.5 h-4.5 stroke-[3px]" />
-            ) : (
-              <Menu className="w-4.5 h-4.5 stroke-[3px]" />
-            )}
-          </button>
+            <motion.div
+              animate={{ rotate: isSidebarExpanded ? 180 : 0 }}
+              transition={{ type: "spring", stiffness: 350, damping: 22 }}
+            >
+              {isSidebarExpanded ? (
+                <ChevronLeft className="w-4.5 h-4.5 stroke-[3px]" />
+              ) : (
+                <Menu className="w-4.5 h-4.5 stroke-[3px]" />
+              )}
+            </motion.div>
+          </motion.button>
         )}
         {isLogin && (
           <div className="absolute top-6 right-6 z-10 md:hidden">

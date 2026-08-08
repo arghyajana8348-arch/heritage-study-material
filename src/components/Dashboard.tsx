@@ -16,6 +16,7 @@ import {
 
 import { getUserDisplayName } from "../lib/utils";
 import StudyAnalytics from "./StudyAnalytics";
+import SubjectPieChart from "./SubjectPieChart";
 import BadgeGallery from "./BadgeGallery";
 
 interface DashboardProps {
@@ -290,6 +291,12 @@ export default function Dashboard({
         completedItems={completedItems}
         completedModulesCount={completedModulesCount}
         totalModules={totalModules}
+      />
+
+      {/* Subject Module Completion Pie Chart */}
+      <SubjectPieChart
+        completedItems={completedItems}
+        onNavigate={onNavigate}
       />
 
       {/* Badges and Milestones Gallery */}

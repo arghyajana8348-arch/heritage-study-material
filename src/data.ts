@@ -101,6 +101,7 @@ const generateSubjects = (semesterId: number): Subject[] => {
         name: "Physics-I",
         code: "PHY1001",
         progress: 0,
+        semester: 1,
         modules: generateModules("PHY1001", "Physics-I"),
       },
       {
@@ -108,6 +109,7 @@ const generateSubjects = (semesterId: number): Subject[] => {
         name: "Mathematics-I",
         code: "MTH1101",
         progress: 0,
+        semester: 1,
         modules: generateModules("MTH1101", "Mathematics-I"),
       },
       {
@@ -115,6 +117,7 @@ const generateSubjects = (semesterId: number): Subject[] => {
         name: "Introduction to Electronics Devices & Circuits",
         code: "ECE1001",
         progress: 0,
+        semester: 1,
         modules: generateModules(
           "ECE1001",
           "Introduction to Electronics Devices & Circuits",
@@ -125,6 +128,7 @@ const generateSubjects = (semesterId: number): Subject[] => {
         name: "Universal Human Values and Professional Ethics",
         code: "HUM1002",
         progress: 0,
+        semester: 1,
         modules: generateModules(
           "HUM1002",
           "Universal Human Values and Professional Ethics",
@@ -138,6 +142,7 @@ const generateSubjects = (semesterId: number): Subject[] => {
         name: "Chemistry I",
         code: "CHM1001",
         progress: 0,
+        semester: 2,
         modules: generateModules("CHM1001", "Chemistry I"),
       },
       {
@@ -145,6 +150,7 @@ const generateSubjects = (semesterId: number): Subject[] => {
         name: "Mathematics II",
         code: "MTH1201",
         progress: 0,
+        semester: 2,
         modules: generateModules("MTH1201", "Mathematics II"),
       },
       {
@@ -152,6 +158,7 @@ const generateSubjects = (semesterId: number): Subject[] => {
         name: "Programming for Problem Solving",
         code: "CSE1001",
         progress: 0,
+        semester: 2,
         modules: generateModules("CSE1001", "Programming for Problem Solving"),
       },
       {
@@ -159,6 +166,7 @@ const generateSubjects = (semesterId: number): Subject[] => {
         name: "Basic Electrical Engineering",
         code: "ELE1001",
         progress: 0,
+        semester: 2,
         modules: generateModules("ELE1001", "Basic Electrical Engineering"),
       },
       {
@@ -166,6 +174,7 @@ const generateSubjects = (semesterId: number): Subject[] => {
         name: "English for Technical Writing",
         code: "HUM1001",
         progress: 0,
+        semester: 2,
         modules: generateModules("HUM1001", "English for Technical Writing"),
       },
     ];

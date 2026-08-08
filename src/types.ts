@@ -61,6 +61,7 @@ export interface Subject {
   code: string;
   modules: Module[];
   progress: number; // 0-4
+  semester?: number;
   sprint?: SprintItem[];
   pyqs?: PYQItem[];
 }
