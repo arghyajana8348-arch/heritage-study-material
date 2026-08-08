@@ -125,6 +125,113 @@ Keep the tone encouraging, clear, and direct for a university student.
     }
   });
 
+  // API route for generating Gemini AI overall Quiz Performance Rating & Detailed Review
+  app.post("/api/quiz/rate-performance", async (req, res) => {
+    try {
+      const {
+        subjectName,
+        moduleName,
+        score,
+        total,
+        percentage,
+        questionsSummary,
+      } = req.body;
+
+      const apiKey = getGeminiApiKey();
+      if (!apiKey) {
+        return res.status(500).json({
+          error:
+            "GEMINI_API_KEY environment variable is missing or invalid. Please configure it in Settings > Secrets.",
+        });
+      }
+
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            "User-Agent": "aistudio-build",
+          },
+        },
+      });
+
+      const prompt = `
+Act as an expert academic mentor analyzing a student's performance on a quiz.
+Subject: ${subjectName || "Engineering / Science"}
+Module: ${moduleName || "General"}
+Score: ${score} / ${total} (${percentage}%)
+
+Summary of Questions:
+${JSON.stringify(questionsSummary || [], null, 2)}
+
+Provide a structured assessment JSON object with the following fields EXACTLY:
+{
+  "ratingTitle": "Short catchy title (e.g. 'A+ Concept Mastery', 'B+ Strong Concept Foundation', 'C Concept Brushup Needed')",
+  "stars": <number between 1 and 5 based on percentage: 90-100% -> 5, 75-89% -> 4, 60-74% -> 3, 40-59% -> 2, below 40% -> 1>,
+  "summary": "2-3 sentences summarizing the overall performance and core takeaways.",
+  "strengths": ["1-2 key areas where student demonstrated good understanding"],
+  "areasToImprove": ["1-2 specific conceptual topics or question types where student lost points"],
+  "actionableTip": "1 practical study tip to master this module before exams"
+}
+
+Return ONLY valid raw JSON. No markdown blocks or extra text around it.
+`;
+
+      const candidateModels = ["gemini-3.6-flash", "gemini-flash-latest"];
+      let rawJson: string | null = null;
+      let lastError: any = null;
+
+      for (const modelName of candidateModels) {
+        try {
+          const response = await ai.models.generateContent({
+            model: modelName,
+            contents: prompt,
+            config: {
+              systemInstruction:
+                "You are an encouraging academic evaluation AI that outputs clean, valid JSON performance ratings.",
+              temperature: 0.5,
+              responseMimeType: "application/json",
+            },
+          });
+
+          if (response && response.text) {
+            rawJson = response.text;
+            break;
+          }
+        } catch (err: any) {
+          console.warn(`Gemini rating with ${modelName} failed:`, err?.message || err);
+          lastError = err;
+        }
+      }
+
+      if (!rawJson) {
+        throw lastError || new Error("Failed to get rating from Gemini AI.");
+      }
+
+      let parsedRating;
+      try {
+        const cleanStr = rawJson.replace(/```json/g, "").replace(/```/g, "").trim();
+        parsedRating = JSON.parse(cleanStr);
+      } catch (parseErr) {
+        console.error("Failed to parse Gemini JSON output:", rawJson);
+        parsedRating = {
+          ratingTitle: percentage >= 80 ? "A - Concept Master" : percentage >= 60 ? "B - Solid Performance" : "C - Study Needed",
+          stars: Math.max(1, Math.min(5, Math.ceil(percentage / 20))),
+          summary: `You scored ${score}/${total} (${percentage}%) on ${moduleName}.`,
+          strengths: [percentage >= 50 ? "Good engagement with core questions" : "Attempted all module questions"],
+          areasToImprove: [percentage < 100 ? "Review incorrect options carefully" : "Maintain consistency across modules"],
+          actionableTip: "Re-read the study module PDF and take practice notes on missed topics.",
+        };
+      }
+
+      return res.json({ rating: parsedRating });
+    } catch (error: any) {
+      console.error("Error generating Gemini AI performance rating:", error);
+      return res.status(500).json({
+        error: error?.message || "Failed to generate AI performance rating.",
+      });
+    }
+  });
+
   // Health check endpoint
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });

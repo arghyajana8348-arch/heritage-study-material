@@ -10,6 +10,11 @@ import {
   Loader2,
   AlertCircle,
   Lightbulb,
+  Star,
+  ThumbsUp,
+  ThumbsDown,
+  Award,
+  Check,
 } from "lucide-react";
 
 interface QuizProps {
@@ -102,6 +107,81 @@ export default function Quiz({
   const [explanations, setExplanations] = useState<
     Record<number, { text?: string; loading: boolean; error?: string }>
   >({});
+
+  // State for overall Gemini AI performance rating
+  const [performanceRating, setPerformanceRating] = useState<{
+    loading: boolean;
+    data?: {
+      ratingTitle: string;
+      stars: number;
+      summary: string;
+      strengths: string[];
+      areasToImprove: string[];
+      actionableTip: string;
+    };
+    error?: string;
+  }>({ loading: false });
+
+  // State for per-question explanation feedback ratings
+  const [explanationRatings, setExplanationRatings] = useState<
+    Record<number, "up" | "down">
+  >({});
+
+  const rateExplanation = (qId: number, feedback: "up" | "down") => {
+    setExplanationRatings((prev) => ({
+      ...prev,
+      [qId]: feedback,
+    }));
+  };
+
+  const fetchPerformanceRating = async () => {
+    setPerformanceRating({ loading: true });
+    try {
+      const score = calculateScore();
+      const total = sampleQuestions.length;
+      const percentage = Math.round((score / total) * 100);
+
+      const questionsSummary = sampleQuestions.map((q) => ({
+        question: q.text,
+        userChoice: q.options[selectedAnswers[q.id]] ?? "None",
+        correctChoice: q.options[q.correctAnswer],
+        isCorrect: selectedAnswers[q.id] === q.correctAnswer,
+      }));
+
+      const res = await fetch("/api/quiz/rate-performance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subjectName,
+          moduleName,
+          score,
+          total,
+          percentage,
+          questionsSummary,
+        }),
+      });
+
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Invalid response from server. Check GEMINI_API_KEY in Settings > Secrets.");
+      }
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to generate AI performance rating.");
+      }
+
+      setPerformanceRating({ loading: false, data: data.rating });
+      if (onUnlockBadge) {
+        onUnlockBadge("ai_learner");
+      }
+    } catch (err: any) {
+      setPerformanceRating({
+        loading: false,
+        error: err?.message || "Could not generate AI rating.",
+      });
+    }
+  };
 
   const currentQuestion = sampleQuestions[currentQuestionIndex];
 
@@ -235,6 +315,114 @@ export default function Quiz({
             You scored {score} out of {sampleQuestions.length} in {moduleName}.
           </p>
 
+          {/* Gemini AI Performance Rating Section */}
+          <div className="mb-6 text-left">
+            {!performanceRating.data && !performanceRating.loading && !performanceRating.error && (
+              <button
+                onClick={fetchPerformanceRating}
+                className="w-full py-3 px-4 bg-[#C19BF5] border-[3px] border-slate-950 text-slate-950 font-black text-xs uppercase italic tracking-wider rounded-xl shadow-[4px_4px_0px_0px_#000] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 stroke-[2.5px]" />
+                Get Gemini AI Performance Rating & Review
+                <Award className="w-4 h-4 stroke-[2.5px]" />
+              </button>
+            )}
+
+            {performanceRating.loading && (
+              <div className="p-4 bg-purple-50 dark:bg-purple-950/30 border-2 border-purple-950 rounded-xl flex items-center justify-center gap-3 text-purple-950 dark:text-purple-300 font-extrabold text-xs">
+                <Loader2 className="w-5 h-5 animate-spin stroke-[3px]" />
+                <span>Evaluating quiz results with Gemini AI...</span>
+              </div>
+            )}
+
+            {performanceRating.error && (
+              <div className="p-4 bg-red-50 dark:bg-red-950/30 border-2 border-slate-950 rounded-xl flex items-center justify-between text-xs font-bold text-red-700 dark:text-red-400">
+                <span>{performanceRating.error}</span>
+                <button
+                  onClick={fetchPerformanceRating}
+                  className="px-2.5 py-1 bg-white border border-slate-950 text-slate-950 font-black rounded shadow-[2px_2px_0px_0px_#000] cursor-pointer shrink-0"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
+            {performanceRating.data && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-purple-50/80 dark:bg-purple-950/50 border-[3px] border-slate-950 dark:border-white p-5 rounded-2xl shadow-[4px_4px_0px_0px_#000] dark:shadow-[4px_4px_0px_0px_#FFD54F]"
+              >
+                <div className="flex items-center justify-between border-b-2 border-slate-950/10 dark:border-slate-800 pb-3 mb-3">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-purple-700 dark:text-purple-400 stroke-[2.5px]" />
+                    <span className="text-xs font-black uppercase italic tracking-wider text-purple-950 dark:text-purple-200">
+                      Gemini AI Rating & Evaluation
+                    </span>
+                  </div>
+
+                  {/* Rating Stars */}
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star
+                        key={s}
+                        className={`w-4 h-4 ${
+                          s <= performanceRating.data!.stars
+                            ? "fill-amber-400 text-slate-950 stroke-[1.5px]"
+                            : "text-slate-300 dark:text-slate-700 stroke-[1.5px]"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <h3 className="text-lg font-black text-slate-950 dark:text-white uppercase italic mb-1">
+                  {performanceRating.data.ratingTitle}
+                </h3>
+
+                <p className="text-xs font-medium text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
+                  {performanceRating.data.summary}
+                </p>
+
+                {performanceRating.data.strengths?.length > 0 && (
+                  <div className="mb-2">
+                    <span className="text-[10px] font-black uppercase text-emerald-700 dark:text-emerald-400 block mb-1">
+                      Key Strengths:
+                    </span>
+                    <ul className="list-disc list-inside text-xs font-semibold text-slate-800 dark:text-slate-200 space-y-0.5">
+                      {performanceRating.data.strengths.map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {performanceRating.data.areasToImprove?.length > 0 && (
+                  <div className="mb-3">
+                    <span className="text-[10px] font-black uppercase text-amber-700 dark:text-amber-400 block mb-1">
+                      Focus Areas:
+                    </span>
+                    <ul className="list-disc list-inside text-xs font-semibold text-slate-800 dark:text-slate-200 space-y-0.5">
+                      {performanceRating.data.areasToImprove.map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {performanceRating.data.actionableTip && (
+                  <div className="bg-amber-100/80 dark:bg-amber-950/40 border border-amber-900/30 p-2.5 rounded-xl flex items-start gap-2">
+                    <Lightbulb className="w-4 h-4 text-amber-700 dark:text-amber-400 shrink-0 mt-0.5" />
+                    <p className="text-[11px] font-bold text-amber-950 dark:text-amber-200 leading-snug">
+                      <span className="uppercase font-black text-[10px]">AI Tip: </span>
+                      {performanceRating.data.actionableTip}
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </div>
+
           {wrongQuestions.length > 0 && (
             <div className="mb-6 flex items-center justify-between bg-[#C19BF5]/20 border-2 border-slate-950 rounded-xl p-3">
               <div className="flex items-center gap-2 text-left">
@@ -311,11 +499,41 @@ export default function Quiz({
                           </div>
                         ) : exp?.text ? (
                           <div className="bg-purple-50 dark:bg-purple-950/40 border-2 border-purple-900 dark:border-purple-600 p-3 rounded-xl">
-                            <div className="flex items-center gap-1.5 mb-1.5 text-purple-900 dark:text-purple-300">
-                              <Sparkles className="w-4 h-4 stroke-[2.5px]" />
-                              <span className="text-xs font-black uppercase tracking-wide">
-                                Gemini AI Feedback
-                              </span>
+                            <div className="flex items-center justify-between gap-1.5 mb-1.5 text-purple-900 dark:text-purple-300">
+                              <div className="flex items-center gap-1.5">
+                                <Sparkles className="w-4 h-4 stroke-[2.5px]" />
+                                <span className="text-xs font-black uppercase tracking-wide">
+                                  Gemini AI Feedback
+                                </span>
+                              </div>
+
+                              {/* Feedback Rating controls */}
+                              <div className="flex items-center gap-1">
+                                {explanationRatings[q.id] ? (
+                                  <span className="text-[10px] font-black uppercase text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-950 flex items-center gap-1">
+                                    <Check className="w-3 h-3 stroke-[3px]" />
+                                    Rated
+                                  </span>
+                                ) : (
+                                  <>
+                                    <span className="text-[10px] font-bold text-slate-500 mr-1">Rate:</span>
+                                    <button
+                                      onClick={() => rateExplanation(q.id, "up")}
+                                      className="p-1 rounded bg-white dark:bg-slate-900 border border-slate-950 hover:bg-emerald-100 dark:hover:bg-emerald-900 transition-all cursor-pointer"
+                                      title="Helpful AI Feedback"
+                                    >
+                                      <ThumbsUp className="w-3.5 h-3.5 text-emerald-600" />
+                                    </button>
+                                    <button
+                                      onClick={() => rateExplanation(q.id, "down")}
+                                      className="p-1 rounded bg-white dark:bg-slate-900 border border-slate-950 hover:bg-rose-100 dark:hover:bg-rose-900 transition-all cursor-pointer"
+                                      title="Needs Improvement"
+                                    >
+                                      <ThumbsDown className="w-3.5 h-3.5 text-rose-600" />
+                                    </button>
+                                  </>
+                                )}
+                              </div>
                             </div>
                             <p className="text-xs font-medium text-slate-800 dark:text-slate-200 leading-relaxed">
                               {exp.text}
