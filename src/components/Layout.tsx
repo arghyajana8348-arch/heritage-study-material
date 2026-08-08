@@ -149,7 +149,7 @@ function GlobalSearch({
           type="text"
           placeholder="Search subjects, modules..."
           className="w-full bg-transparent border-none focus:outline-none focus:ring-0 text-xs sm:text-sm px-2 sm:px-3 text-slate-900 dark:text-white placeholder:text-slate-500 font-semibold"
-          value={query}
+          value={query ?? ""}
           onChange={(e) => {
             setQuery(e.target.value);
             setIsOpen(true);

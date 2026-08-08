@@ -182,7 +182,7 @@ export default function Login({ onLogin }: LoginProps) {
                 <input
                   type="text"
                   id="fullName"
-                  value={fullName}
+                  value={fullName ?? ""}
                   onChange={(e) => {
                     setFullName(e.target.value);
                     setError("");
@@ -197,7 +197,7 @@ export default function Login({ onLogin }: LoginProps) {
               <input
                 type="email"
                 id="email"
-                value={email}
+                value={email ?? ""}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setError("");
@@ -212,7 +212,7 @@ export default function Login({ onLogin }: LoginProps) {
               <input
                 type="password"
                 id="password"
-                value={password}
+                value={password ?? ""}
                 onChange={(e) => {
                   setPassword(e.target.value);
                   setError("");
@@ -229,7 +229,7 @@ export default function Login({ onLogin }: LoginProps) {
                   <input
                     id="remember-me"
                     type="checkbox"
-                    checked={rememberMe}
+                    checked={!!rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
                     className="w-4 h-4 text-slate-950 bg-white border-2 border-slate-950 rounded focus:ring-0 checked:bg-slate-950 cursor-pointer"
                   />

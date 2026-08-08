@@ -149,7 +149,7 @@ export default function Account({
                   <input
                     type="password"
                     placeholder="New Password (min 6 characters)"
-                    value={newPassword}
+                    value={newPassword ?? ""}
                     onChange={(e) => setNewPassword(e.target.value)}
                     className="flex-1 bg-white dark:bg-slate-950 border-2 border-slate-950 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-950 dark:text-white focus:outline-none"
                   />

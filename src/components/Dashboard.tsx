@@ -494,7 +494,7 @@ export default function Dashboard({
                         type="text"
                         placeholder="Card Number"
                         className="w-full px-4 py-3 border-2 border-slate-950 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl focus:outline-none font-bold"
-                        value={cardNumber}
+                        value={cardNumber ?? ""}
                         onChange={(e) => setCardNumber(e.target.value)}
                       />
                       <div className="grid grid-cols-2 gap-4">
@@ -502,14 +502,14 @@ export default function Dashboard({
                           type="text"
                           placeholder="MM/YY"
                           className="w-full px-4 py-3 border-2 border-slate-950 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl focus:outline-none font-bold"
-                          value={cardExp}
+                          value={cardExp ?? ""}
                           onChange={(e) => setCardExp(e.target.value)}
                         />
                         <input
                           type="text"
                           placeholder="CVC"
                           className="w-full px-4 py-3 border-2 border-slate-950 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl focus:outline-none font-bold"
-                          value={cardCvc}
+                          value={cardCvc ?? ""}
                           onChange={(e) => setCardCvc(e.target.value)}
                         />
                       </div>
