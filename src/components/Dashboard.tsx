@@ -43,6 +43,9 @@ export default function Dashboard({
   const [checkoutState, setCheckoutState] = useState<
     "idle" | "processing" | "success"
   >("idle");
+  const [cardNumber, setCardNumber] = useState("4242 4242 4242 4242");
+  const [cardExp, setCardExp] = useState("12/26");
+  const [cardCvc, setCardCvc] = useState("123");
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -484,20 +487,23 @@ export default function Dashboard({
                         type="text"
                         placeholder="Card Number"
                         className="w-full px-4 py-3 border-2 border-slate-950 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl focus:outline-none font-bold"
-                        defaultValue="4242 4242 4242 4242"
+                        value={cardNumber}
+                        onChange={(e) => setCardNumber(e.target.value)}
                       />
                       <div className="grid grid-cols-2 gap-4">
                         <input
                           type="text"
                           placeholder="MM/YY"
                           className="w-full px-4 py-3 border-2 border-slate-950 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl focus:outline-none font-bold"
-                          defaultValue="12/26"
+                          value={cardExp}
+                          onChange={(e) => setCardExp(e.target.value)}
                         />
                         <input
                           type="text"
                           placeholder="CVC"
                           className="w-full px-4 py-3 border-2 border-slate-950 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-950 dark:text-white rounded-xl focus:outline-none font-bold"
-                          defaultValue="123"
+                          value={cardCvc}
+                          onChange={(e) => setCardCvc(e.target.value)}
                         />
                       </div>
                     </div>

@@ -11,6 +11,7 @@ export default function Login({ onLogin }: LoginProps) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -228,7 +229,9 @@ export default function Login({ onLogin }: LoginProps) {
                   <input
                     id="remember-me"
                     type="checkbox"
-                    className="w-4 h-4 text-slate-950 bg-white border-2 border-slate-950 rounded focus:ring-0 checked:bg-slate-950"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 text-slate-950 bg-white border-2 border-slate-950 rounded focus:ring-0 checked:bg-slate-950 cursor-pointer"
                   />
                   <label htmlFor="remember-me" className="ml-2 text-xs font-bold text-slate-650 dark:text-slate-400 select-none">
                     Remember me

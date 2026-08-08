@@ -632,20 +632,20 @@ export default function Layout({
                 <AnimatePresence>
                   {isNotifDropdownOpen && (
                     <>
-                      {/* Mobile Backdrop Overlay */}
+                      {/* Mobile & Tablet Backdrop Overlay */}
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setIsNotifDropdownOpen(false)}
-                        className="fixed inset-0 bg-slate-950/30 backdrop-blur-xs z-40 sm:hidden"
+                        className="fixed inset-0 bg-slate-950/30 backdrop-blur-xs z-40 lg:hidden"
                       />
 
                       <motion.div
-                        initial={{ opacity: 0, y: 10, x: "-50%", scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }}
-                        exit={{ opacity: 0, y: 10, x: "-50%", scale: 0.95 }}
-                        className="fixed left-1/2 top-20 sm:absolute sm:top-[calc(100%+12px)] z-50 w-[calc(100vw-32px)] max-w-sm sm:w-96 bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] dark:shadow-[5px_5px_0px_0px_rgba(255,255,255,1)] overflow-hidden text-slate-950 dark:text-white"
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="fixed left-1/2 -translate-x-1/2 top-20 sm:top-24 lg:absolute lg:top-[calc(100%+12px)] lg:left-auto lg:right-0 lg:translate-x-0 z-50 w-[calc(100vw-32px)] max-w-md lg:w-96 bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] dark:shadow-[5px_5px_0px_0px_rgba(255,255,255,1)] overflow-hidden text-slate-950 dark:text-white"
                       >
                         {/* Dropdown Header */}
                       <div className="px-4 py-3 bg-slate-100 dark:bg-slate-800/80 border-b-2 border-slate-950 dark:border-slate-700 flex items-center justify-between">
