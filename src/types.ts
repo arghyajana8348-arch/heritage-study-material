@@ -75,6 +75,16 @@ export interface Bookmark {
   subjectName?: string;
 }
 
+export interface AppNotification {
+  id: string;
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  type?: "admin" | "system" | "update" | "alert";
+  sender?: string;
+}
+
 export type ViewState =
   | { view: "login" }
   | { view: "dashboard" }

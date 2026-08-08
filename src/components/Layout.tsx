@@ -18,6 +18,7 @@ import {
   Info,
   User,
   Bell,
+  BellOff,
   Shield,
   Menu,
   GraduationCap,
@@ -26,6 +27,14 @@ import { supabase } from "../lib/supabase";
 import { getUserDisplayName, getUserInitials } from "../lib/utils";
 import { motion, AnimatePresence } from "motion/react";
 import { subjects } from "../data";
+import { AppNotification } from "../types";
+import {
+  getNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+  deleteNotification,
+  clearAllNotifications,
+} from "../lib/notifications";
 
 interface LayoutProps {
   currentView: ViewState;
@@ -118,7 +127,7 @@ function GlobalSearch({
 
   return (
     <div
-      className="relative z-50 flex-1 min-w-0 max-w-md ml-2 mr-2 md:ml-4 md:mr-8"
+      className="relative z-50 flex-1 min-w-[130px] sm:min-w-[160px] max-w-xs md:max-w-sm lg:max-w-md mx-2 md:mx-3 lg:mx-6"
       ref={searchRef}
     >
       {/* Mobile Backdrop overlay when search dropdown is open */}
@@ -257,6 +266,12 @@ export default function Layout({
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Notifications State & Ref
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [isNotifDropdownOpen, setIsNotifDropdownOpen] = useState(false);
+  const notifDropdownRef = useRef<HTMLDivElement>(null);
+
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -267,9 +282,27 @@ export default function Layout({
       ) {
         setIsProfileDropdownOpen(false);
       }
+      if (
+        notifDropdownRef.current &&
+        !notifDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsNotifDropdownOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Sync notifications across tabs and custom events
+  useEffect(() => {
+    const syncNotifs = () => setNotifications(getNotifications());
+    syncNotifs();
+    window.addEventListener("heritage_notifications_updated", syncNotifs);
+    window.addEventListener("storage", syncNotifs);
+    return () => {
+      window.removeEventListener("heritage_notifications_updated", syncNotifs);
+      window.removeEventListener("storage", syncNotifs);
+    };
   }, []);
 
   useEffect(() => {
@@ -353,6 +386,8 @@ export default function Layout({
       onClick: () => onNavigate({ view: "account" }),
     },
   ];
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   let headerTitle = "";
   let showBack =
@@ -477,7 +512,7 @@ export default function Layout({
         {!isLogin && (
           <button
             onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
-            className={`absolute z-45 bg-[#FFD54F] border-[3px] border-slate-955 text-slate-955 p-2 rounded-xl shadow-[3px_3px_0px_0px_#000] hover:bg-[#ebc238] transition-all cursor-pointer flex items-center justify-center top-3.5 md:top-6.5 left-4`}
+            className={`absolute z-45 bg-[#FFD54F] border-[3px] border-slate-955 text-slate-955 p-2 rounded-xl shadow-[3px_3px_0px_0px_#000] hover:bg-[#ebc238] transition-all cursor-pointer flex items-center justify-center top-3.5 sm:top-4 md:top-5 lg:top-6.5 left-3 sm:left-4`}
             title={isSidebarExpanded ? "Collapse Menu" : "Expand Menu"}
           >
             {isSidebarExpanded ? (
@@ -494,11 +529,18 @@ export default function Layout({
               className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white text-slate-950 dark:text-white hover:scale-105 active:scale-95 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)]"
               aria-label="Toggle dark mode"
             >
-              {darkMode ? (
-                <Sun className="w-5 h-5 stroke-[2.5px]" />
-              ) : (
-                <Moon className="w-5 h-5 stroke-[2.5px]" />
-              )}
+              <motion.div
+                key={darkMode ? "dark" : "light"}
+                initial={{ rotate: -90, scale: 0.5, opacity: 0 }}
+                animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
+                {darkMode ? (
+                  <Sun className="w-5 h-5 stroke-[2.5px] text-amber-400" />
+                ) : (
+                  <Moon className="w-5 h-5 stroke-[2.5px] text-indigo-600" />
+                )}
+              </motion.div>
             </button>
           </div>
         )}
@@ -506,71 +548,212 @@ export default function Layout({
           <div className="absolute top-6 right-6 z-10 hidden md:block">
             <button
               onClick={onToggleDarkMode}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white text-slate-950 dark:text-white hover:scale-105 active:scale-95 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] font-extrabold text-sm"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white text-slate-950 dark:text-white hover:scale-105 active:scale-95 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] font-extrabold text-sm cursor-pointer"
             >
-              {darkMode ? (
-                <Sun className="w-4 h-4 stroke-[3px]" />
-              ) : (
-                <Moon className="w-4 h-4 stroke-[3px]" />
-              )}
+              <motion.div
+                key={darkMode ? "dark" : "light"}
+                initial={{ rotate: -90, scale: 0.5, opacity: 0 }}
+                animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
+                {darkMode ? (
+                  <Sun className="w-4 h-4 stroke-[3px] text-amber-400" />
+                ) : (
+                  <Moon className="w-4 h-4 stroke-[3px] text-indigo-600" />
+                )}
+              </motion.div>
               {darkMode ? "LIGHT MODE" : "DARK MODE"}
             </button>
           </div>
         )}
 
         {!isLogin && (
-          <header className="bg-white dark:bg-slate-950 border-b-[3px] border-slate-950 dark:border-white pl-16 pr-4 md:pl-20 md:pr-8 flex items-center shrink-0 z-40 h-18 py-4 md:h-24 md:py-6 overflow-visible transition-colors duration-300">
-            <div className="w-10 md:w-auto md:min-w-[80px]">
+          <header className="bg-white dark:bg-slate-950 border-b-[3px] border-slate-950 dark:border-white pl-14 sm:pl-16 md:pl-18 lg:pl-20 pr-3 sm:pr-4 md:pr-6 lg:pr-8 flex items-center justify-between gap-1.5 sm:gap-2 md:gap-3 shrink-0 z-40 h-16 sm:h-18 md:h-20 lg:h-24 py-3 md:py-4 transition-colors duration-300 overflow-visible">
+            <div className="shrink-0">
               {showBack && (
                 <button
                   onClick={onPop}
-                  className="p-2 -ml-2 md:ml-0 md:px-4 md:py-2.5 rounded-xl bg-[#FFD54F] border-[3px] border-slate-950 dark:border-white text-slate-950 font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all flex items-center gap-2"
+                  className="p-2 md:px-3 lg:px-4 md:py-2 rounded-xl bg-[#FFD54F] border-[3px] border-slate-950 dark:border-white text-slate-950 font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 transition-all flex items-center gap-1.5 shrink-0"
                   aria-label="Go back"
                 >
                   <ChevronLeft className="w-5 h-5 stroke-[3px]" />
-                  <span className="hidden md:inline font-bold text-sm tracking-wide">
+                  <span className="hidden lg:inline font-bold text-sm tracking-wide">
                     BACK
                   </span>
                 </button>
               )}
             </div>
 
-            <h1 className="hidden md:block font-black text-slate-950 dark:text-white text-2xl truncate px-6 uppercase italic tracking-wide">
+            <h1 className="hidden lg:block font-black text-slate-950 dark:text-white text-xl xl:text-2xl truncate px-2 lg:px-4 xl:px-6 uppercase italic tracking-wide">
               {headerTitle}
             </h1>
 
-            <GlobalSearch onNavigate={onNavigate} />            <div ref={profileDropdownRef} className="flex items-center gap-3 ml-auto relative">
+            <GlobalSearch onNavigate={onNavigate} />
+
+            <div ref={profileDropdownRef} className="flex items-center gap-1.5 sm:gap-2 lg:gap-3 ml-auto shrink-0 relative">
               {/* Theme Toggle */}
               <button
                 onClick={onToggleDarkMode}
-                className="p-2 rounded-xl bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white text-slate-955 dark:text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:scale-105 transition-all shrink-0 cursor-pointer"
+                className="p-2 rounded-xl bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white text-slate-955 dark:text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:scale-105 active:scale-95 transition-all shrink-0 cursor-pointer overflow-hidden"
                 aria-label="Toggle dark/light theme"
               >
-                {darkMode ? (
-                  <Sun className="w-5 h-5 stroke-[2.5px]" />
-                ) : (
-                  <Moon className="w-5 h-5 stroke-[2.5px]" />
-                )}
+                <motion.div
+                  key={darkMode ? "dark" : "light"}
+                  initial={{ rotate: -90, scale: 0.5, opacity: 0 }}
+                  animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  {darkMode ? (
+                    <Sun className="w-5 h-5 stroke-[2.5px] text-amber-400" />
+                  ) : (
+                    <Moon className="w-5 h-5 stroke-[2.5px] text-indigo-600" />
+                  )}
+                </motion.div>
               </button>
 
-              {/* Notification Bell */}
-              <button
-                className="p-2 rounded-xl bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white text-slate-950 dark:text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-105 transition-all relative shrink-0"
-                aria-label="Notifications"
-              >
-                <Bell className="w-5 h-5 stroke-[2.5px]" />
-                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-[#FF603D] rounded-full border-2 border-slate-950"></span>
-              </button>
+              {/* Notification Bell with Dropdown */}
+              <div ref={notifDropdownRef} className="relative shrink-0">
+                <button
+                  onClick={() => {
+                    setIsNotifDropdownOpen(!isNotifDropdownOpen);
+                    setIsProfileDropdownOpen(false);
+                  }}
+                  className="p-2 rounded-xl bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white text-slate-950 dark:text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:scale-105 transition-all relative shrink-0 cursor-pointer flex items-center justify-center"
+                  aria-label="Notifications"
+                >
+                  <Bell className="w-5 h-5 stroke-[2.5px]" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1 bg-[#FF603D] text-white font-black text-[10px] rounded-full border-2 border-slate-950 flex items-center justify-center animate-pulse shadow-[1px_1px_0px_0px_#000]">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {isNotifDropdownOpen && (
+                    <>
+                      {/* Mobile Backdrop Overlay */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsNotifDropdownOpen(false)}
+                        className="fixed inset-0 bg-slate-950/30 backdrop-blur-xs z-40 sm:hidden"
+                      />
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, x: "-50%", scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, x: "-50%", scale: 1 }}
+                        exit={{ opacity: 0, y: 10, x: "-50%", scale: 0.95 }}
+                        className="fixed left-1/2 top-20 sm:absolute sm:top-[calc(100%+12px)] z-50 w-[calc(100vw-32px)] max-w-sm sm:w-96 bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-2xl shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] dark:shadow-[5px_5px_0px_0px_rgba(255,255,255,1)] overflow-hidden text-slate-950 dark:text-white"
+                      >
+                        {/* Dropdown Header */}
+                      <div className="px-4 py-3 bg-slate-100 dark:bg-slate-800/80 border-b-2 border-slate-950 dark:border-slate-700 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Bell className="w-4 h-4 text-[#FF603D]" />
+                          <span className="font-black text-sm uppercase tracking-wide">Notifications</span>
+                          {unreadCount > 0 && (
+                            <span className="text-[10px] font-black bg-[#FF603D] text-white px-2 py-0.5 rounded-full border border-slate-950">
+                              {unreadCount} New
+                            </span>
+                          )}
+                        </div>
+                        {notifications.length > 0 && (
+                          <div className="flex items-center gap-2">
+                            {unreadCount > 0 && (
+                              <button
+                                onClick={() => markAllNotificationsAsRead()}
+                                className="text-[11px] font-extrabold text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white underline cursor-pointer"
+                              >
+                                Read all
+                              </button>
+                            )}
+                            <button
+                              onClick={() => clearAllNotifications()}
+                              className="text-[11px] font-extrabold text-[#FF603D] hover:underline cursor-pointer"
+                            >
+                              Clear all
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Dropdown Body */}
+                      <div className="max-h-80 overflow-y-auto divide-y-2 divide-slate-100 dark:divide-slate-800">
+                        {notifications.length === 0 ? (
+                          <div className="p-6 text-center">
+                            <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 border-2 border-slate-950 dark:border-slate-700 mx-auto flex items-center justify-center mb-3 text-slate-400">
+                              <BellOff className="w-6 h-6 stroke-[2px]" />
+                            </div>
+                            <h4 className="font-black text-sm uppercase text-slate-950 dark:text-white">
+                              No Notifications Right Now
+                            </h4>
+                            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                              When an admin pushes an exam notice or study update, it will appear here.
+                            </p>
+                          </div>
+                        ) : (
+                          notifications.map((notif) => (
+                            <div
+                              key={notif.id}
+                              onClick={() => markNotificationAsRead(notif.id)}
+                              className={`p-4 transition-colors relative cursor-pointer ${
+                                !notif.read
+                                  ? "bg-amber-50/90 dark:bg-amber-950/30 hover:bg-amber-100/90 dark:hover:bg-amber-950/50"
+                                  : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                              }`}
+                            >
+                              <div className="flex items-start justify-between gap-2 mb-1">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  {!notif.read && (
+                                    <span className="w-2 h-2 rounded-full bg-[#FF603D] shrink-0" />
+                                  )}
+                                  <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-[#FFD54F] text-slate-950 border border-slate-950">
+                                    {notif.type || "Admin"}
+                                  </span>
+                                  <span className="text-[10px] font-bold text-slate-400">
+                                    {new Date(notif.timestamp).toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })}
+                                  </span>
+                                </div>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteNotification(notif.id);
+                                  }}
+                                  className="text-slate-400 hover:text-red-500 p-0.5 shrink-0"
+                                  title="Delete"
+                                >
+                                  <X className="w-3.5 h-3.5 stroke-[3px]" />
+                                </button>
+                              </div>
+                              <h5 className="font-extrabold text-sm text-slate-950 dark:text-white leading-tight">
+                                {notif.title}
+                              </h5>
+                              <p className="text-xs text-slate-600 dark:text-slate-300 font-medium mt-1 leading-snug">
+                                {notif.message}
+                              </p>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+              </div>
 
               {/* Profile Card */}
               <button
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                className="flex items-center gap-2 p-1.5 md:pr-3 bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-xl shadow-[3px_3px_0px_0px_#000] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer text-left shrink-0"
+                className="flex items-center gap-2 p-1.5 lg:pr-3 bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-xl shadow-[2px_2px_0px_0px_#000] md:shadow-[3px_3px_0px_0px_#000] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer text-left shrink-0"
               >
                 <div className="w-8 h-8 rounded-lg bg-[#C19BF5] border-2 border-slate-950 flex items-center justify-center font-black shadow-[1.5px_1.5px_0px_0px_#000] text-slate-955 shrink-0 uppercase text-xs">
                   {userInitials}
                 </div>
-                <div className="hidden md:block min-w-0 pr-1 select-none leading-none">
+                <div className="hidden lg:block min-w-0 pr-1 select-none leading-none max-w-[110px] xl:max-w-none">
                   <h4 className="font-black text-xs text-slate-950 dark:text-white truncate uppercase mb-0.5">{accountName}</h4>
                   <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold truncate">{emailHandle}</p>
                 </div>

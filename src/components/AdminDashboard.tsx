@@ -12,19 +12,27 @@ import {
   Upload,
   BrainCircuit,
   Zap,
+  Bell,
+  Send,
 } from "lucide-react";
 import { subjects } from "../data";
 import { Subject, Module, QuizQuestion } from "../types";
+import { pushAdminNotification } from "../lib/notifications";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<
-    "material" | "quiz" | "mindmap" | "sprint" | "pyq"
+    "material" | "quiz" | "mindmap" | "sprint" | "pyq" | "notification"
   >("material");
   const [selectedSubject, setSelectedSubject] = useState<string>("");
   const [selectedModule, setSelectedModule] = useState<string>("");
   const [sprintType, setSprintType] = useState<
     "pdf" | "handwritten" | "suggestions"
   >("pdf");
+
+  // Notification Push State
+  const [notifTitle, setNotifTitle] = useState("");
+  const [notifMessage, setNotifMessage] = useState("");
+  const [notifType, setNotifType] = useState<"admin" | "alert" | "update">("admin");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -359,10 +367,117 @@ export default function AdminDashboard() {
             <FileText className="w-5 h-5" />
             PYQ
           </button>
+          <button
+            onClick={() => setActiveTab("notification")}
+            className={`flex-1 py-4 font-medium flex items-center justify-center gap-2 transition-colors ${
+              activeTab === "notification"
+                ? "text-[#FF603D] border-b-2 border-[#FF603D] bg-orange-50/50 dark:bg-orange-950/20"
+                : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            }`}
+          >
+            <Bell className="w-5 h-5 text-[#FF603D]" />
+            Push Notice
+          </button>
         </div>
 
         <div className="p-6 md:p-8 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {activeTab === "notification" ? (
+            <div className="space-y-6">
+              <div className="bg-orange-50 dark:bg-orange-950/30 border-2 border-[#FF603D] p-5 rounded-2xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#FF603D] text-white flex items-center justify-center font-black shrink-0">
+                    <Bell className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-base text-slate-950 dark:text-white uppercase">
+                      Admin Push Notification Center
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 font-medium">
+                      Broadcast real-time study alerts, exam notices, or material updates directly to all active students.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-900 dark:text-white mb-2">
+                    Notice Title
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g., End-Term Exam Notes Uploaded for Module 3!"
+                    value={notifTitle}
+                    onChange={(e) => setNotifTitle(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#FF603D]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-bold text-slate-900 dark:text-white mb-2">
+                      Notification Badge / Category
+                    </label>
+                    <select
+                      value={notifType}
+                      onChange={(e) => setNotifType(e.target.value as any)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#FF603D]"
+                    >
+                      <option value="admin">Admin Notice 📣</option>
+                      <option value="alert">Exam Alert ⚡</option>
+                      <option value="update">New Material Uploaded 📚</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-slate-900 dark:text-white mb-2">
+                    Announcement Message
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Write detailed instructions or information for students..."
+                    value={notifMessage}
+                    onChange={(e) => setNotifMessage(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-semibold focus:outline-none focus:ring-2 focus:ring-[#FF603D]"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-between">
+                {showSuccess ? (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-sm"
+                  >
+                    <CheckCircle className="w-5 h-5" />
+                    Notification pushed successfully! Red badge updated on student bells.
+                  </motion.div>
+                ) : (
+                  <div />
+                )}
+
+                <button
+                  onClick={() => {
+                    if (!notifTitle.trim() || !notifMessage.trim()) return;
+                    pushAdminNotification(notifTitle, notifMessage, notifType);
+                    setShowSuccess(true);
+                    setNotifTitle("");
+                    setNotifMessage("");
+                    setTimeout(() => setShowSuccess(false), 3500);
+                  }}
+                  disabled={!notifTitle.trim() || !notifMessage.trim()}
+                  className="flex items-center gap-2 bg-[#FF603D] hover:bg-orange-600 text-white px-6 py-3 rounded-xl font-extrabold uppercase shadow-[2px_2px_0px_0px_#000] disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                >
+                  <Send className="w-4 h-4" />
+                  Broadcast Notification
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                 Subject
@@ -757,6 +872,8 @@ export default function AdminDashboard() {
                       : "Quiz"}
             </button>
           </div>
+            </>
+          )}
         </div>
       </div>
     </div>

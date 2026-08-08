@@ -7,12 +7,14 @@ interface SubjectListProps {
   onNavigate: (view: ViewState) => void;
   bookmarks: Bookmark[];
   onToggleBookmark: (bookmark: Bookmark) => void;
+  completedItems?: string[];
 }
 
 export default function SubjectList({
   onNavigate,
   bookmarks,
   onToggleBookmark,
+  completedItems = [],
 }: SubjectListProps) {
   const subjectsToDisplay = subjects;
 
@@ -33,8 +35,38 @@ export default function SubjectList({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {subjectsToDisplay.map((subject, index) => {
           const totalModules = subject.modules.length;
+          let totalTasks = 0;
+          let completedTasks = 0;
+          let completedModulesCount = 0;
+
+          subject.modules.forEach((m) => {
+            let mTotal = 0;
+            let mDone = 0;
+
+            if (m.content.studyMaterial.available) {
+              mTotal++;
+              totalTasks++;
+              if (completedItems.includes(`${m.id}-material`)) {
+                mDone++;
+                completedTasks++;
+              }
+            }
+            if (m.content.quiz.available) {
+              mTotal++;
+              totalTasks++;
+              if (completedItems.includes(`${m.id}-quiz`)) {
+                mDone++;
+                completedTasks++;
+              }
+            }
+
+            if (mTotal > 0 && mDone === mTotal) {
+              completedModulesCount++;
+            }
+          });
+
           const progressPercentage =
-            totalModules > 0 ? (subject.progress / totalModules) * 100 : 0;
+            totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
           
           const cardColor = cardColors[index % cardColors.length];
 
@@ -56,11 +88,11 @@ export default function SubjectList({
                   })
                 }
               >
-                <div className="flex-1 pr-2">
+                <div className="flex-1 min-w-0 pr-3">
                   <span className="text-[10px] font-black tracking-widest text-slate-950 dark:text-slate-950 uppercase bg-white/40 border border-slate-950 px-2 py-0.5 rounded block w-fit mb-2">
                     {subject.code}
                   </span>
-                  <h3 className="text-xl font-black text-slate-950 dark:text-slate-950 leading-tight uppercase italic mt-1 group-hover:underline">
+                  <h3 className="text-lg sm:text-xl font-black text-slate-950 dark:text-slate-950 leading-tight uppercase italic mt-1 group-hover:underline break-words" title={subject.name}>
                     {subject.name}
                   </h3>
                 </div>
@@ -102,7 +134,7 @@ export default function SubjectList({
                     Course Progress
                   </span>
                   <span className="text-[10px] font-black text-slate-950 dark:text-slate-950 bg-white/40 border border-slate-950 px-2 py-0.5 rounded">
-                    {subject.progress}/{totalModules} Modules
+                    {completedModulesCount}/{totalModules} Modules ({progressPercentage}%)
                   </span>
                 </div>
                 <div className="h-3 w-full bg-white border-2 border-slate-950 rounded-full overflow-hidden">

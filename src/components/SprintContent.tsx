@@ -11,14 +11,22 @@ import { getSubject } from "../data";
 interface SprintContentProps {
   subjectId: string;
   subjectName: string;
+  onUnlockBadge?: (badgeId: string) => void;
 }
 
 export default function SprintContent({
   subjectId,
   subjectName,
+  onUnlockBadge,
 }: SprintContentProps) {
   const subject = getSubject(subjectId);
   const sprintData = subject?.sprint || [];
+
+  React.useEffect(() => {
+    if (onUnlockBadge) {
+      onUnlockBadge("sprint_warrior");
+    }
+  }, [onUnlockBadge]);
 
   return (
     <div className="pb-24 md:pb-8">

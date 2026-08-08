@@ -2,8 +2,15 @@ import React, { useState, useEffect } from "react";
 import { User, Mail, Key, Shield, AlertCircle, CheckCircle2, LogOut } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { getUserDisplayName } from "../lib/utils";
+import BadgeGallery from "./BadgeGallery";
 
-export default function Account({ onLogout }: { onLogout: () => void }) {
+export default function Account({
+  onLogout,
+  unlockedBadges = {},
+}: {
+  onLogout: () => void;
+  unlockedBadges?: Record<string, string>;
+}) {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false);
@@ -88,6 +95,9 @@ export default function Account({ onLogout }: { onLogout: () => void }) {
           Manage your account details and security preferences.
         </p>
       </div>
+
+      {/* Badges & Milestones Section */}
+      <BadgeGallery unlockedBadges={unlockedBadges} />
 
       <div className="bg-white dark:bg-slate-900 border-[3px] border-slate-950 dark:border-white rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] overflow-hidden">
         <div className="p-6 md:p-8 border-b-[3px] border-slate-950 dark:border-slate-800">

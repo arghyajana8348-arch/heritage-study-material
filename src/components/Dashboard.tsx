@@ -16,6 +16,7 @@ import {
 
 import { getUserDisplayName } from "../lib/utils";
 import StudyAnalytics from "./StudyAnalytics";
+import BadgeGallery from "./BadgeGallery";
 
 interface DashboardProps {
   user: { email: string; user_metadata?: any } | null;
@@ -25,6 +26,7 @@ interface DashboardProps {
   bookmarks: Bookmark[];
   completedItems: string[];
   onToggleBookmark: (bookmark: Bookmark) => void;
+  unlockedBadges?: Record<string, string>;
 }
 
 export default function Dashboard({
@@ -35,6 +37,7 @@ export default function Dashboard({
   bookmarks,
   completedItems,
   onToggleBookmark,
+  unlockedBadges = {},
 }: DashboardProps) {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [checkoutState, setCheckoutState] = useState<
@@ -190,13 +193,15 @@ export default function Dashboard({
               }
               className="w-full flex-1 min-h-[220px] bg-[#C19BF5] border-[3px] border-slate-950 text-slate-950 p-8 text-left relative overflow-hidden group shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_#FFD54F] rounded-2xl hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0 active:translate-y-0 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all flex flex-col justify-between cursor-pointer"
             >
-              <div className="relative z-10 flex flex-col h-full justify-between gap-6">
+              <div className="relative z-10 flex flex-col h-full justify-between gap-6 pr-2 sm:pr-6">
                 <div>
-                  <div className="flex items-center gap-2 text-slate-950 text-xs font-black uppercase tracking-wider bg-white/40 border-2 border-slate-950 w-fit px-3 py-1 rounded-full">
-                    <Clock className="w-3.5 h-3.5 stroke-[2.5px]" />
-                    <span>{nextToLearn.subjectName}</span>
+                  <div className="flex items-center gap-2 text-slate-950 text-xs font-black uppercase tracking-wider bg-white/40 border-2 border-slate-950 w-fit px-3 py-1 rounded-full max-w-full overflow-hidden">
+                    <Clock className="w-3.5 h-3.5 stroke-[2.5px] shrink-0" />
+                    <span className="truncate max-w-[180px] xs:max-w-[240px] sm:max-w-xs md:max-w-sm" title={nextToLearn.subjectName}>
+                      {nextToLearn.subjectName}
+                    </span>
                   </div>
-                  <h4 className="text-slate-950 text-3xl font-black mt-4 pr-8 max-w-md leading-none uppercase italic">
+                  <h4 className="text-slate-950 text-2xl sm:text-3xl font-black mt-4 max-w-md leading-tight uppercase italic break-words">
                     {nextToLearn.moduleName}
                   </h4>
                 </div>
@@ -283,6 +288,9 @@ export default function Dashboard({
         completedModulesCount={completedModulesCount}
         totalModules={totalModules}
       />
+
+      {/* Badges and Milestones Gallery */}
+      <BadgeGallery unlockedBadges={unlockedBadges} />
 
       {/* Quick Links */}
       <motion.section

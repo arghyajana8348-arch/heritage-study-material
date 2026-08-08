@@ -7,6 +7,13 @@
   --font-sans: "Plus Jakarta Sans", "Outfit", ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Smooth dark/light theme transitions */
+*, ::before, ::after {
+  transition-property: background-color, color, border-color, box-shadow, stroke, fill;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Custom scrollbars for a premium neo-brutalist feel */
 ::-webkit-scrollbar {
   width: 10px;
@@ -38,3 +45,4 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #ff603d;
 }
+

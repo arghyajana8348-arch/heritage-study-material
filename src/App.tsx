@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Bookmark, ViewState } from "./types";
+import { subjects } from "./data";
+import { getUnlockedBadges, saveUnlockedBadge } from "./badges";
 import Layout from "./components/Layout";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
@@ -12,6 +14,7 @@ import SprintContent from "./components/SprintContent";
 import AdminDashboard from "./components/AdminDashboard";
 import AboutUs from "./components/AboutUs";
 import Account from "./components/Account";
+import BadgeUnlockModal from "./components/BadgeUnlockModal";
 import { AnimatePresence, motion } from "motion/react";
 import { supabase } from "./lib/supabase";
 
@@ -22,6 +25,20 @@ export default function App() {
   const [hasPaid, setHasPaid] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [completedItems, setCompletedItems] = useState<string[]>([]);
+
+  // Badge System State
+  const [unlockedBadges, setUnlockedBadges] = useState<Record<string, string>>(
+    () => getUnlockedBadges()
+  );
+  const [activeBadgeModal, setActiveBadgeModal] = useState<string | null>(null);
+
+  const unlockBadge = (badgeId: string) => {
+    const newlyUnlocked = saveUnlockedBadge(badgeId);
+    if (newlyUnlocked) {
+      setUnlockedBadges(getUnlockedBadges());
+      setActiveBadgeModal(badgeId);
+    }
+  };
 
   // Session check and auth listener on mount
   useEffect(() => {
@@ -163,6 +180,45 @@ export default function App() {
     }
   };
 
+  // Automatic Milestone & Badge Evaluation
+  useEffect(() => {
+    if (completedItems.length > 0) {
+      if (completedItems.some((id) => id.endsWith("-material"))) {
+        unlockBadge("scholar_notes");
+      }
+      if (completedItems.some((id) => id.endsWith("-quiz"))) {
+        unlockBadge("first_quiz");
+      }
+      if (completedItems.length >= 5) {
+        unlockBadge("task_master");
+      }
+
+      let finishedSubjects = 0;
+      subjects.forEach((sub) => {
+        let subTotal = 0;
+        let subDone = 0;
+        sub.modules.forEach((m) => {
+          if (m.content.studyMaterial.available) {
+            subTotal++;
+            if (completedItems.includes(`${m.id}-material`)) subDone++;
+          }
+          if (m.content.quiz.available) {
+            subTotal++;
+            if (completedItems.includes(`${m.id}-quiz`)) subDone++;
+          }
+        });
+        if (subTotal > 0 && subDone === subTotal) {
+          finishedSubjects++;
+          unlockBadge("subject_conqueror");
+        }
+      });
+
+      if (finishedSubjects === subjects.length && subjects.length > 0) {
+        unlockBadge("academic_legend");
+      }
+    }
+  }, [completedItems]);
+
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -257,6 +313,7 @@ export default function App() {
             bookmarks={bookmarks}
             completedItems={completedItems}
             onToggleBookmark={toggleBookmark}
+            unlockedBadges={unlockedBadges}
           />
         );
       case "subjects":
@@ -265,6 +322,7 @@ export default function App() {
             onNavigate={pushView}
             bookmarks={bookmarks}
             onToggleBookmark={toggleBookmark}
+            completedItems={completedItems}
           />
         );
       case "modules":
@@ -274,6 +332,7 @@ export default function App() {
             onNavigate={pushView}
             bookmarks={bookmarks}
             onToggleBookmark={toggleBookmark}
+            completedItems={completedItems}
           />
         );
       case "moduleDetail":
@@ -285,6 +344,7 @@ export default function App() {
             onNavigate={pushView}
             completedItems={completedItems}
             onToggleCompleted={toggleCompletedItem}
+            onUnlockBadge={unlockBadge}
           />
         );
       case "quiz":
@@ -294,6 +354,9 @@ export default function App() {
             moduleName={currentView.moduleName}
             subjectName={currentView.subjectName}
             onNavigate={pushView}
+            completedItems={completedItems}
+            onToggleCompleted={toggleCompletedItem}
+            onUnlockBadge={unlockBadge}
           />
         );
       case "examSprint":
@@ -303,8 +366,6 @@ export default function App() {
             onNavigate={pushView}
             isAdmin={isAdmin}
             onPay={() => {
-              // Usually handled by Dashboard, but if they click from sidebar
-              // and are not paid, they can trigger payment here
               setHasPaid(true);
             }}
           />
@@ -314,6 +375,7 @@ export default function App() {
           <SprintContent
             subjectId={currentView.subjectId}
             subjectName={currentView.subjectName}
+            onUnlockBadge={unlockBadge}
           />
         );
 
@@ -322,7 +384,7 @@ export default function App() {
       case "about":
         return <AboutUs />;
       case "account":
-        return <Account onLogout={handleLogout} />;
+        return <Account onLogout={handleLogout} unlockedBadges={unlockedBadges} />;
       default:
         return <div>View not found</div>;
     }
@@ -356,6 +418,12 @@ export default function App() {
           {renderView()}
         </motion.div>
       </AnimatePresence>
+
+      {/* Badge Unlock Celebration Modal */}
+      <BadgeUnlockModal
+        badgeId={activeBadgeModal}
+        onClose={() => setActiveBadgeModal(null)}
+      />
     </Layout>
   );
 }
