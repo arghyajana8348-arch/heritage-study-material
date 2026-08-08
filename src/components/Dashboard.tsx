@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { getUserDisplayName } from "../lib/utils";
+import StudyAnalytics from "./StudyAnalytics";
 
 interface DashboardProps {
   user: { email: string; user_metadata?: any } | null;
@@ -275,6 +276,13 @@ export default function Dashboard({
           </div>
         </motion.section>
       </div>
+
+      {/* Study Analytics Section */}
+      <StudyAnalytics
+        completedItems={completedItems}
+        completedModulesCount={completedModulesCount}
+        totalModules={totalModules}
+      />
 
       {/* Quick Links */}
       <motion.section
