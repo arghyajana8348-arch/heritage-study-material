@@ -79,9 +79,10 @@ export interface UnlockedBadge {
   unlockedAt: string;
 }
 
-export function getUnlockedBadges(): Record<string, string> {
+export function getUnlockedBadges(userId?: string): Record<string, string> {
   try {
-    const saved = localStorage.getItem("unlocked_badges");
+    const key = userId ? `unlocked_badges_${userId}` : "unlocked_badges";
+    const saved = localStorage.getItem(key);
     if (saved) {
       return JSON.parse(saved);
     }
@@ -91,12 +92,24 @@ export function getUnlockedBadges(): Record<string, string> {
   return {};
 }
 
-export function saveUnlockedBadge(badgeId: string): boolean {
+export function saveAllUnlockedBadges(
+  badges: Record<string, string>,
+  userId?: string
+): void {
   try {
-    const current = getUnlockedBadges();
+    const key = userId ? `unlocked_badges_${userId}` : "unlocked_badges";
+    localStorage.setItem(key, JSON.stringify(badges));
+  } catch (e) {
+    console.error("Error saving all badges to localStorage", e);
+  }
+}
+
+export function saveUnlockedBadge(badgeId: string, userId?: string): boolean {
+  try {
+    const current = getUnlockedBadges(userId);
     if (!current[badgeId]) {
       current[badgeId] = new Date().toISOString();
-      localStorage.setItem("unlocked_badges", JSON.stringify(current));
+      saveAllUnlockedBadges(current, userId);
       return true; // Newly unlocked!
     }
   } catch (e) {

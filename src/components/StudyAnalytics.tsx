@@ -58,8 +58,8 @@ export default function StudyAnalytics({
         // Ensure at least 1 module/task if completedItems exists and idx matches peak
         if (totalDone < 5 && idx === 3) count = Math.max(1, count);
       } else {
-        // Default baseline preview numbers if brand new user
-        count = [1, 2, 0, 3, 1, 2, 0][idx];
+        // New user has 0 completed tasks
+        count = 0;
       }
 
       return {
@@ -187,10 +187,18 @@ export default function StudyAnalytics({
             Peak Activity
           </p>
           <p className="text-2xl font-black text-slate-950 dark:text-white mt-0.5 italic">
-            {peakDay?.day}{" "}
-            <span className="text-xs font-bold not-italic text-slate-500">
-              ({peakDay?.completed})
-            </span>
+            {totalThisWeek > 0 ? (
+              <>
+                {peakDay?.day}{" "}
+                <span className="text-xs font-bold not-italic text-slate-500">
+                  ({peakDay?.completed})
+                </span>
+              </>
+            ) : (
+              <span className="text-sm font-bold not-italic text-slate-500 dark:text-slate-400">
+                None yet
+              </span>
+            )}
           </p>
         </div>
 

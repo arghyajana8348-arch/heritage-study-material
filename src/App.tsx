@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { Bookmark, ViewState } from "./types";
 import { subjects } from "./data";
-import { getUnlockedBadges, saveUnlockedBadge } from "./badges";
+import {
+  getUnlockedBadges,
+  saveUnlockedBadge,
+  saveAllUnlockedBadges,
+} from "./badges";
 import Layout from "./components/Layout";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
@@ -33,10 +37,24 @@ export default function App() {
   const [activeBadgeModal, setActiveBadgeModal] = useState<string | null>(null);
 
   const unlockBadge = (badgeId: string) => {
-    const newlyUnlocked = saveUnlockedBadge(badgeId);
+    const user_id = user?.id || user?.email;
+    const newlyUnlocked = saveUnlockedBadge(badgeId, user_id);
     if (newlyUnlocked) {
-      setUnlockedBadges(getUnlockedBadges());
+      setUnlockedBadges(getUnlockedBadges(user_id));
       setActiveBadgeModal(badgeId);
+
+      if (user_id) {
+        supabase
+          .from("user_badges")
+          .insert({
+            user_id,
+            badge_id: badgeId,
+            unlocked_at: new Date().toISOString(),
+          })
+          .then(({ error }) => {
+            if (error) console.warn("Supabase badge save notice:", error.message);
+          });
+      }
     }
   };
 
@@ -84,12 +102,13 @@ export default function App() {
     };
   }, []);
 
-  // Fetch bookmarks & completed items when user changes
+  // Fetch bookmarks, completed items & user badges when user changes
   useEffect(() => {
     const fetchData = async () => {
       if (!user) {
         setBookmarks([]);
         setCompletedItems([]);
+        setUnlockedBadges({});
         return;
       }
 
@@ -114,6 +133,8 @@ export default function App() {
               subjectName: b.subject_name,
             }))
           );
+        } else {
+          setBookmarks([]);
         }
 
         // Fetch Completed Items
@@ -124,9 +145,32 @@ export default function App() {
 
         if (completedData && Array.isArray(completedData)) {
           setCompletedItems(completedData.map((c: any) => c.item_id));
+        } else {
+          setCompletedItems([]);
         }
+
+        // Fetch User Badges
+        const { data: badgesData } = await supabase
+          .from("user_badges")
+          .select("*")
+          .eq("user_id", user_id);
+
+        const localBadges = getUnlockedBadges(user_id);
+        const mergedBadges: Record<string, string> = { ...localBadges };
+
+        if (badgesData && Array.isArray(badgesData)) {
+          badgesData.forEach((b: any) => {
+            if (b.badge_id) {
+              mergedBadges[b.badge_id] = b.unlocked_at || new Date().toISOString();
+            }
+          });
+        }
+
+        saveAllUnlockedBadges(mergedBadges, user_id);
+        setUnlockedBadges(mergedBadges);
       } catch (err) {
         console.warn("Failed to fetch user data:", err);
+        setUnlockedBadges(getUnlockedBadges(user_id));
       }
     };
 
